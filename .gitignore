@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+*.user
+*.suo
+*.vcxproj.user
+*.VC.db
+*.ipch
+/.vs/Baqader_GameEngine
+/Baqader_GameEngine/Debug
+/Debug
