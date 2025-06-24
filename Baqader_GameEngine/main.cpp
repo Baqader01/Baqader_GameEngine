@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 //window dimensions
-GLuint WIDTH = 800, HEIGHT = 600;
+GLint WIDTH = 800, HEIGHT = 600;
 
 int main()
 {
@@ -44,7 +44,7 @@ int main()
 	//allow modern extension features
 	glewExperimental = GL_TRUE;
 
-	if (!glewInit() != GLEW_OK)
+	if (glewInit() != GLEW_OK)
 	{
 		printf("glew initailsation failed");
 		glfwTerminate();
@@ -62,13 +62,13 @@ int main()
 		// color background
 		glClearColor(0.2f, 0.2f, 0.8f, 1.0f);
 		
-		//render
+		//process + handle inputs
+		glfwPollEvents();
+
 
 		//swap buffers
 		glfwSwapBuffers(window);
 
-		//process + handle inputs
-		glfwPollEvents();
 	}
 
 	glfwTerminate();
