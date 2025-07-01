@@ -2,11 +2,20 @@
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <string.h>
+#include <cmath>
+#include <glm/mat4x4.hpp>
+
+
 
 //window dimensions
 GLint WIDTH = 800, HEIGHT = 600;
 
-GLuint VAO, VBO, shader;
+GLuint VAO, VBO, shader, uniformXMove;
+
+bool direction = true;
+float triOffset = 0.0f;
+float triMaxOffset = 0.7f;
+float triIncrement = 0.00005f;
 
 //vertex shader
 static const char* vShader = R"(
@@ -14,9 +23,11 @@ static const char* vShader = R"(
 
 layout (location = 0) in vec3 pos;
 
+uniform float xMove;
+
 void main()
 {
-	gl_Position = vec4(pos.x, pos.y, pos.z, 1.0);
+	gl_Position = vec4(pos.x + xMove, pos.y, pos.z, 1.0);
 }
 )";
 
@@ -115,6 +126,9 @@ void CompileShader() {
 		glGetProgramInfoLog(shader, sizeof(eLog), NULL, eLog);
 		return;
 	}
+
+	uniformXMove = glGetUniformLocation(shader, "xMove");
+
 }
 
 int main()
@@ -181,20 +195,36 @@ int main()
 		//process + handle inputs
 		glfwPollEvents();
 
+		if (direction)
+		{
+			triOffset += triIncrement;
+		}
+		else
+		{
+			triOffset -= triIncrement;
+		}
+
+		if (abs(triOffset) >= triMaxOffset)
+		{
+			direction = !direction;
+		}
+
 		//render
 		glUseProgram(shader);
+
+		glUniform1f(uniformXMove, triOffset);
+
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		glBindVertexArray(0);
 		glUseProgram(0);
 
-
-
 		//swap buffers
 		glfwSwapBuffers(window);
 
 	}
+
 
 	glfwTerminate();
 	return 0;
