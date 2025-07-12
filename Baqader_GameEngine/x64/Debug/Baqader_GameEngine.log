@@ -1,0 +1,43 @@
+﻿  main.cpp
+D:\c++\Baqader_GameEngine\Baqader_GameEngine\main.cpp(54,3): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+D:\c++\Baqader_GameEngine\Baqader_GameEngine\main.cpp(54,9): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+D:\c++\Baqader_GameEngine\Baqader_GameEngine\main.cpp(55,4): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+D:\c++\Baqader_GameEngine\Baqader_GameEngine\main.cpp(55,9): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+D:\c++\Baqader_GameEngine\Baqader_GameEngine\main.cpp(56,10): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+D:\c++\Baqader_GameEngine\Baqader_GameEngine\main.cpp(81,20): warning C4267: '=': conversion from 'size_t' to 'GLint', possible loss of data
+main.obj : error LNK2019: unresolved external symbol __imp_glewInit referenced in function main
+main.obj : error LNK2019: unresolved external symbol glfwInit referenced in function main
+main.obj : error LNK2019: unresolved external symbol glfwTerminate referenced in function main
+main.obj : error LNK2019: unresolved external symbol glfwWindowHint referenced in function main
+main.obj : error LNK2019: unresolved external symbol glfwCreateWindow referenced in function main
+main.obj : error LNK2019: unresolved external symbol glfwDestroyWindow referenced in function main
+main.obj : error LNK2019: unresolved external symbol glfwWindowShouldClose referenced in function main
+main.obj : error LNK2019: unresolved external symbol glfwGetFramebufferSize referenced in function main
+main.obj : error LNK2019: unresolved external symbol glfwPollEvents referenced in function main
+main.obj : error LNK2019: unresolved external symbol glfwMakeContextCurrent referenced in function main
+main.obj : error LNK2019: unresolved external symbol glfwSwapBuffers referenced in function main
+main.obj : error LNK2019: unresolved external symbol __imp___glewBindBuffer referenced in function "void __cdecl CreateTriangle(void)" (?CreateTriangle@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp___glewBufferData referenced in function "void __cdecl CreateTriangle(void)" (?CreateTriangle@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp___glewGenBuffers referenced in function "void __cdecl CreateTriangle(void)" (?CreateTriangle@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp___glewAttachShader referenced in function "void __cdecl AddShader(unsigned int,char const *,unsigned int)" (?AddShader@@YAXIPEBDI@Z)
+main.obj : error LNK2019: unresolved external symbol __imp___glewCompileShader referenced in function "void __cdecl AddShader(unsigned int,char const *,unsigned int)" (?AddShader@@YAXIPEBDI@Z)
+main.obj : error LNK2019: unresolved external symbol __imp___glewCreateProgram referenced in function "void __cdecl CompileShader(void)" (?CompileShader@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp___glewCreateShader referenced in function "void __cdecl AddShader(unsigned int,char const *,unsigned int)" (?AddShader@@YAXIPEBDI@Z)
+main.obj : error LNK2019: unresolved external symbol __imp___glewEnableVertexAttribArray referenced in function "void __cdecl CreateTriangle(void)" (?CreateTriangle@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp___glewGetProgramInfoLog referenced in function "void __cdecl CompileShader(void)" (?CompileShader@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp___glewGetProgramiv referenced in function "void __cdecl CompileShader(void)" (?CompileShader@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp___glewGetShaderInfoLog referenced in function "void __cdecl AddShader(unsigned int,char const *,unsigned int)" (?AddShader@@YAXIPEBDI@Z)
+main.obj : error LNK2019: unresolved external symbol __imp___glewGetShaderiv referenced in function "void __cdecl AddShader(unsigned int,char const *,unsigned int)" (?AddShader@@YAXIPEBDI@Z)
+main.obj : error LNK2019: unresolved external symbol __imp___glewGetUniformLocation referenced in function "void __cdecl CompileShader(void)" (?CompileShader@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp___glewLinkProgram referenced in function "void __cdecl CompileShader(void)" (?CompileShader@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp___glewShaderSource referenced in function "void __cdecl AddShader(unsigned int,char const *,unsigned int)" (?AddShader@@YAXIPEBDI@Z)
+main.obj : error LNK2019: unresolved external symbol __imp___glewUniformMatrix4fv referenced in function main
+main.obj : error LNK2019: unresolved external symbol __imp___glewUseProgram referenced in function main
+main.obj : error LNK2019: unresolved external symbol __imp___glewValidateProgram referenced in function "void __cdecl CompileShader(void)" (?CompileShader@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp___glewVertexAttribPointer referenced in function "void __cdecl CreateTriangle(void)" (?CreateTriangle@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp___glewBindVertexArray referenced in function "void __cdecl CreateTriangle(void)" (?CreateTriangle@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp___glewGenVertexArrays referenced in function "void __cdecl CreateTriangle(void)" (?CreateTriangle@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol __imp_glewExperimental referenced in function main
+D:\c++\Baqader_GameEngine\\..\External\GLFW\lib-vc2022\glfw3.lib : warning LNK4272: library machine type 'x86' conflicts with target machine type 'x64'
+D:\c++\Baqader_GameEngine\\..\External\GLEW\lib\Release\Win32\glew32.lib : warning LNK4272: library machine type 'x86' conflicts with target machine type 'x64'
+D:\c++\Baqader_GameEngine\x64\Debug\Baqader_GameEngine.exe : fatal error LNK1120: 33 unresolved externals
