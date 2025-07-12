@@ -7,8 +7,6 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include <glm/gtc/type_ptr.hpp>
 
-
-
 //window dimensions
 const GLint WIDTH = 800, HEIGHT = 600;
 const float toRadians = 3.1459265f / 180.0f;
@@ -30,7 +28,7 @@ uniform mat4 model;
 
 void main()
 {
-	gl_Position = model * vec4(pos.x, pos.y, pos.z, 1.0);
+	gl_Position = model * vec4(pos, 1.0);
 }
 )";
 
@@ -51,9 +49,9 @@ void CreateTriangle()
 {
 	GLfloat vertices[] =
 	{
-		-0.4, -0.4, 0,
-		 0.4, -0.4, 0,
-		 0  ,  0.4, 0
+		-1, -1, 0,
+		 1, -1, 0,
+		 0  ,1, 0
 	};
 
 	glGenVertexArrays(1, &VAO);
@@ -216,7 +214,9 @@ int main()
 		glUseProgram(shader);
 
 		glm::mat4 model(1.0f);
-		model = glm::translate(model, glm::vec3(triOffset, 0.0f, 0.0f));
+		//model = glm::translate(model, glm::vec3(triOffset, 0.0f, 0.0f));
+		//model = glm::rotate(model, 45 * toRadians, glm::vec3(0.0f, 0.0f, 1));
+		model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
 
 		//glUniform1f(uniformModel, triOffset);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
