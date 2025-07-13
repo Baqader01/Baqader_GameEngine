@@ -6,189 +6,75 @@
 #include <glm/mat4x4.hpp>
 #include "glm/gtc/matrix_transform.hpp"
 #include <glm/gtc/type_ptr.hpp>
+#include <vector>
+#include "Mesh.h"
+#include "Shader.h"
+#include "Window.h"
 
 //window dimensions
 const GLint WIDTH = 800, HEIGHT = 600;
 const float toRadians = 3.1459265f / 180.0f;
 
-GLuint VAO, VBO, shader, uniformModel;
+GLuint uniformModel, uniformProjection;
 
-bool direction = true;
-float triOffset = 0.0f;
-float triMaxOffset = 0.7f;
-float triIncrement = 0.0005f;
+Window mainWindow;
+std::vector<Mesh*> meshList;
+std::vector<Shader*> shaderList;
 
 //vertex shader
-static const char* vShader = R"(
-#version 330
-
-layout (location = 0) in vec3 pos;
-
-uniform mat4 model;
-
-void main()
-{
-	gl_Position = model * vec4(pos, 1.0);
-}
-)";
+static const char* vShader = "Shaders/shader.vert";
 
 //fragment shader
-static const char* fShader = R"(
-#version 330
+static const char* fShader = "Shaders/shader.frag";
 
-out vec4 colour;	                 
-                        	                
-void main()                                  	
-{                           		          
-	colour = vec4(1.0, 0 , 0, 1.0);
-}
-
-)";
-
-void CreateTriangle()
+void CreateObjects()
 {
-	GLfloat vertices[] =
+	unsigned int indices[] =
 	{
-		-1, -1, 0,
-		 1, -1, 0,
-		 0  ,1, 0
+		0, 3, 1,
+		1, 3, 2,
+		2, 3, 0,
+		0, 1, 2
+
 	};
 
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
+	GLfloat vertices[] =
+	{
+		-1, -1,  -1,
+		 -1, -1,  0.5,
+		 0.5, -1,  0,
+		 0,  1,  0
+	};
 
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	glEnableVertexAttribArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-
+	Mesh* obj1 = new Mesh();
+	obj1->CreateMesh(vertices, indices, 12, 12);
+	meshList.push_back(obj1);
 }
 
-void AddShader(GLuint program, const char* shaderCode, GLenum type)
+void CreateShaders()
 {
-	GLuint theShader = glCreateShader(type);
-	const GLchar* code[1];
-	code[0] = shaderCode;
-
-	GLint length[1];
-	length[0] = strlen(shaderCode);
-
-	glShaderSource(theShader, 1, code, length);
-	glCompileShader(theShader);
-
-	GLint result = 0;
-	GLchar eLog[1024] = { 0 };
-
-	glGetShaderiv(theShader, GL_COMPILE_STATUS, &result);
-	if (!result)
-	{
-		printf("Error compiling %d shader '%s'\n", type, eLog);
-		glGetShaderInfoLog(theShader, sizeof(eLog), NULL, eLog);
-		return;
-	}
-
-	glAttachShader(program, theShader);
-}
-
-void CompileShader() {
-	shader = glCreateProgram();
-
-	if (!shader)
-	{
-		printf("error creating shader program");
-		return;
-	}
-
-	AddShader(shader, vShader, GL_VERTEX_SHADER);
-	AddShader(shader, fShader, GL_FRAGMENT_SHADER);
-
-	GLint result = 0;
-	GLchar eLog[1024] = { 0 };
-
-	glLinkProgram(shader);
-	glGetProgramiv(shader, GL_LINK_STATUS, &result);
-	if (!result)
-	{
-		printf("Error linking shader");
-		glGetProgramInfoLog(shader, sizeof(eLog), NULL, eLog);
-		return;
-	}
-
-	glValidateProgram(shader);
-	glGetProgramiv(shader, GL_VALIDATE_STATUS, &result);
-	if (!result)
-	{
-		printf("Error validating shader");
-		glGetProgramInfoLog(shader, sizeof(eLog), NULL, eLog);
-		return;
-	}
-
-	uniformModel = glGetUniformLocation(shader, "model");
-
+	Shader* shader1 = new Shader();
+	shader1->CreateFromFile(vShader, fShader);
+	shaderList.push_back(shader1);
 }
 
 int main()
 {
-	if (!glfwInit())
-	{
-		printf("GLFW not initalised");
-		return -1;
-	}
+	mainWindow = Window(800, 600);
+	mainWindow.init();
 
-	//opengl version
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	GLfloat bufferWidth = mainWindow.GetBufferWidth();
+	GLfloat bufferHeight = mainWindow.GetBufferHeight();
 
-	//no backward compatability
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	CreateObjects();
+	CreateShaders();
 
-	//forward compatabilty
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glm::mat4 projection = glm::perspective(45.0f, bufferWidth / bufferHeight, 0.1f, 100.0f);
 
-
-	//window creation
-	GLFWwindow* window;
-	window = glfwCreateWindow(WIDTH, HEIGHT, "Test Window", NULL, NULL);
-
-	if (!window)
-	{
-		printf("window not initalised");
-		glfwTerminate();
-		return -1;
-	}
-	//making window context current
-	glfwMakeContextCurrent(window);
-
-	//get buffer size
-	int bufferWidth, bufferHeight;
-	glfwGetFramebufferSize(window, &bufferWidth, &bufferHeight);
-
-	//allow modern extension features
-	glewExperimental = GL_TRUE;
-
-	if (glewInit() != GLEW_OK)
-	{
-		printf("glew initailsation failed");
-		glfwTerminate();
-		glfwDestroyWindow(window);
-	}
-
-	//set viewport size
-	glViewport(0, 0, bufferWidth, bufferHeight);
-
-
-	CreateTriangle();
-	CompileShader();
-
-	while (!glfwWindowShouldClose(window))
+	while (!mainWindow.getShouldClose())
 	{
 		//clear window
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// color background
 		glClearColor(0.2f, 0.2f, 0.8f, 1.0f);
@@ -196,39 +82,26 @@ int main()
 		//process + handle inputs
 		glfwPollEvents();
 
-		if (direction)
-		{
-			triOffset += triIncrement;
-		}
-		else
-		{
-			triOffset -= triIncrement;
-		}
-
-		if (abs(triOffset) >= triMaxOffset)
-		{
-			direction = !direction;
-		}
+		//shaders
+		shaderList[0]->UseShader();
 
 		//render
-		glUseProgram(shader);
-
 		glm::mat4 model(1.0f);
-		//model = glm::translate(model, glm::vec3(triOffset, 0.0f, 0.0f));
-		//model = glm::rotate(model, 45 * toRadians, glm::vec3(0.0f, 0.0f, 1));
-		model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
+		model = glm::translate(model, glm::vec3(0, 0.0f, -2.5f));
+		model = glm::rotate(model, 0 * toRadians, glm::vec3(0.0f, 1.0f, 0));
+		model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1));
+
+		uniformModel = shaderList[0]->GetModelLocation();
+		uniformProjection = shaderList[0]->GetProjectionLocation();
 
 		//glUniform1f(uniformModel, triOffset);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 
-		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-
-		glBindVertexArray(0);
-		glUseProgram(0);
+		meshList[0]->RenderMesh();
 
 		//swap buffers
-		glfwSwapBuffers(window);
+		mainWindow.swapBuffers();
 
 	}
 
