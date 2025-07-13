@@ -11,7 +11,7 @@
 const GLint WIDTH = 800, HEIGHT = 600;
 const float toRadians = 3.1459265f / 180.0f;
 
-GLuint VAO, VBO, shader, uniformModel;
+GLuint VAO, VBO, IBO, shader, uniformModel;
 
 bool direction = true;
 float triOffset = 0.0f;
@@ -24,11 +24,13 @@ static const char* vShader = R"(
 
 layout (location = 0) in vec3 pos;
 
+out vec4 vCol;
 uniform mat4 model;
 
 void main()
 {
 	gl_Position = model * vec4(pos, 1.0);
+	vCol = vec4(clamp(pos, 0.0f, 1.0f), 1.0f);
 }
 )";
 
@@ -36,26 +38,42 @@ void main()
 static const char* fShader = R"(
 #version 330
 
+in vec4 vCol;
 out vec4 colour;	                 
                         	                
 void main()                                  	
 {                           		          
-	colour = vec4(1.0, 0 , 0, 1.0);
+	//colour = vec4(1.0, 0 , 0, 1.0);
+	colour = vCol;
 }
 
 )";
 
 void CreateTriangle()
 {
+	unsigned int indices[] =
+	{
+		0, 3, 1,
+		1, 3, 2,
+		2, 3, 0,
+		0, 1, 2
+
+	};
+
 	GLfloat vertices[] =
 	{
 		-1, -1, 0,
+		 0, -1, 1,
 		 1, -1, 0,
 		 0  ,1, 0
 	};
 
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
+
+	glGenBuffers(1, &IBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -65,6 +83,7 @@ void CreateTriangle()
 	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
 }
@@ -223,7 +242,7 @@ int main()
 
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
-
+			
 		glBindVertexArray(0);
 		glUseProgram(0);
 
