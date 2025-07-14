@@ -7,16 +7,21 @@
 #include "Mesh.h"
 #include "Shader.h"
 #include "Window.h"
+#include "Camera.h"
 
 //window dimensions
 const GLint WIDTH = 800, HEIGHT = 600;
 const float toRadians = 3.1459265f / 180.0f;
 
-GLuint uniformModel, uniformProjection;
+GLfloat deltaTime = 0.0f;
+GLfloat lastTime = 0.0f;
+
+GLuint uniformModel, uniformProjection, uniformView;
 
 Window mainWindow;
 std::vector<Mesh*> meshList;
 std::vector<Shader*> shaderList;
+Camera camera;
 
 //vertex shader
 static const char* vShader = "Shaders/shader.vert";
@@ -66,10 +71,21 @@ int main()
 	CreateObjects();
 	CreateShaders();
 
+	camera = Camera(
+		glm::vec3(0.0f, 0.0f, 0.0f),    // position
+		glm::vec3(0.0f, -1.0f, 0.0f),   // up
+		90.0f, 0.0f,                     // yaw, pitch
+		5.0f, 1.0f                      // movementSpeed, turnSpeed
+	);
+
 	glm::mat4 projection = glm::perspective(45.0f, bufferWidth / bufferHeight, 0.1f, 100.0f);
 
 	while (!mainWindow.getShouldClose())
 	{
+		GLfloat now = glfwGetTime();
+		deltaTime = now - lastTime;
+		lastTime = now;
+
 		//clear window
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -78,6 +94,9 @@ int main()
 
 		//process + handle inputs
 		glfwPollEvents();
+
+		camera.keyControl(mainWindow.getsKeys(), deltaTime);
+		camera.mouseControl(mainWindow.getChangeX(), mainWindow.getChangeY());
 
 		//shaders
 		shaderList[0]->UseShader();
@@ -90,10 +109,12 @@ int main()
 
 		uniformModel = shaderList[0]->GetModelLocation();
 		uniformProjection = shaderList[0]->GetProjectionLocation();
+		uniformView = shaderList[0]->GetViewLocation();
 
 		//glUniform1f(uniformModel, triOffset);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 
 		meshList[0]->RenderMesh();
 
