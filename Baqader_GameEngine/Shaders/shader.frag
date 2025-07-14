@@ -1,10 +1,9 @@
 #version 330
-
-in vec4 vCol;
 out vec4 colour;
+
+in vec3 vCol;
 
 void main()
 {
-	//colour = vec4(1.0, 0 , 0, 1.0);
-	colour = vCol;
+	colour = vec4(vCol, 1);
 }

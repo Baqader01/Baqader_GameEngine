@@ -1,12 +1,9 @@
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <stdio.h>
-#include <string.h>
-#include <cmath>
+#include <vector>
+
 #include <glm/mat4x4.hpp>
 #include "glm/gtc/matrix_transform.hpp"
 #include <glm/gtc/type_ptr.hpp>
-#include <vector>
+
 #include "Mesh.h"
 #include "Shader.h"
 #include "Window.h"
@@ -39,15 +36,15 @@ void CreateObjects()
 	};
 
 	GLfloat vertices[] =
-	{
-		-1, -1,  -1,
-		 -1, -1,  0.5,
-		 0.5, -1,  0,
-		 0,  1,  0
+	{	 //positions          //rgb
+		 -1, -1,  0,		1, 0, 0, 
+		  0, -1,  1,		1, 1, 1,
+		  1, -1,  0,		0, 0, 1,
+		  0,  1,  0,		0, 1, 0,
 	};
 
 	Mesh* obj1 = new Mesh();
-	obj1->CreateMesh(vertices, indices, 12, 12);
+	obj1->CreateMesh(vertices, indices, 24, 12);
 	meshList.push_back(obj1);
 }
 
@@ -88,7 +85,7 @@ int main()
 		//render
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, glm::vec3(0, 0.0f, -2.5f));
-		model = glm::rotate(model, 0 * toRadians, glm::vec3(0.0f, 1.0f, 0));
+		model = glm::rotate(model, 120 * toRadians, glm::vec3(0.0f, 1.0f, 0));
 		model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1));
 
 		uniformModel = shaderList[0]->GetModelLocation();
