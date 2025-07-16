@@ -40,23 +40,21 @@ void CreateObjects()
 {
 	unsigned int indices[] =
 	{
-		0, 3, 1,
-		1, 3, 2,
-		2, 3, 0,
-		0, 1, 2
-
+		0, 1, 2,
+		2, 3, 0
 	};
 
 	GLfloat vertices[] =
-	{	 //positions				u     v			//rgb
-		 -1.0f, -1.0f,  0.0f,		0.0f, 0.0f,		1.0f, 0.0f, 0.0f,
-		  0.0f, -1.0f,  1.0f,		0.5f, 0.0f,		1.0f, 1.0f, 1.0f,
-		  1.0f, -1.0f,  0.0f,		1.0f, 0.0f,		0.0f, 0.0f, 1.0f,
-		  0.0f,  1.0f,  0.0f,		0.5f, 1.0f,		0.0f, 1.0f, 0.0f,
+	{	 //positions			u     v			//rgb
+		 -10.0f, 0.0f,-10.0f,   0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   // V0 - bottom left
+		  10.0f, 0.0f,-10.0f,   1.0f, 0.0f,   0.0f, 0.0f, 1.0f,   // V1 - bottom right
+		  10.0f, 0.0f, 10.0f,   1.0f, 1.0f,   1.0f, 1.0f, 1.0f,   // V2 - top right
+		 -10.0f, 0.0f, 10.0f,   0.0f, 1.0f,   0.0f, 1.0f, 0.0f    // V3 - top left
 	};
 
 	Mesh* obj1 = new Mesh();
-	obj1->CreateMesh(vertices, indices, 32, 12);
+	obj1->CreateMesh(vertices, indices, sizeof(vertices) / sizeof(vertices[0]), sizeof(indices) / sizeof(indices[0]));
+
 	meshList.push_back(obj1);
 }
 
@@ -80,7 +78,7 @@ int main()
 
 	camera = Camera(
 		glm::vec3(0.0f, 0.0f, 0.0f),    // position
-		glm::vec3(0.0f, -1.0f, 0.0f),   // up
+		glm::vec3(0.0f, 1.0f, 0.0f),   // up
 		90.0f, 0.0f,                     // yaw, pitch
 		5.0f, 0.5f                      // movementSpeed, turnSpeed
 	);
@@ -90,7 +88,7 @@ int main()
 	dirtTexture = Texture("Textures/dirt.png");
 	dirtTexture.LoadTexture();
 
-	glm::mat4 projection = glm::perspective(45.0f, bufferWidth / bufferHeight, 0.1f, 100.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), bufferWidth / bufferHeight, 0.1f, 100.0f);
 
 	while (!mainWindow.getShouldClose())
 	{
@@ -115,9 +113,9 @@ int main()
 
 		//render
 		glm::mat4 model(1.0f);
-		model = glm::translate(model, glm::vec3(0, 0.0f, -2.5f));
-		model = glm::rotate(model, 120 * toRadians, glm::vec3(0.0f, 1.0f, 0));
-		model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1));
+		//model = glm::translate(model, glm::vec3(0, 0.0f, -2.5f));
+		//model = glm::rotate(model, 120 * toRadians, glm::vec3(0.0f, 1.0f, 0));
+		model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4));
 
 		uniformModel = shaderList[0]->GetModelLocation();
 		uniformProjection = shaderList[0]->GetProjectionLocation();
