@@ -1,3 +1,5 @@
+#define STB_IMAGE_IMPLEMENTATION
+
 #include <vector>
 
 #include <glm/mat4x4.hpp>
@@ -8,6 +10,7 @@
 #include "Shader.h"
 #include "Window.h"
 #include "Camera.h"
+#include "Texture.h"
 
 //window dimensions
 const GLint WIDTH = 800, HEIGHT = 600;
@@ -19,6 +22,10 @@ GLfloat lastTime = 0.0f;
 GLuint uniformModel, uniformProjection, uniformView;
 
 Window mainWindow;
+
+Texture brickTexture;
+Texture dirtTexture;
+
 std::vector<Mesh*> meshList;
 std::vector<Shader*> shaderList;
 Camera camera;
@@ -41,15 +48,15 @@ void CreateObjects()
 	};
 
 	GLfloat vertices[] =
-	{	 //positions          //rgb
-		 -1, -1,  0,		1, 0, 0, 
-		  0, -1,  1,		1, 1, 1,
-		  1, -1,  0,		0, 0, 1,
-		  0,  1,  0,		0, 1, 0,
+	{	 //positions				u     v			//rgb
+		 -1.0f, -1.0f,  0.0f,		0.0f, 0.0f,		1.0f, 0.0f, 0.0f,
+		  0.0f, -1.0f,  1.0f,		0.5f, 0.0f,		1.0f, 1.0f, 1.0f,
+		  1.0f, -1.0f,  0.0f,		1.0f, 0.0f,		0.0f, 0.0f, 1.0f,
+		  0.0f,  1.0f,  0.0f,		0.5f, 1.0f,		0.0f, 1.0f, 0.0f,
 	};
 
 	Mesh* obj1 = new Mesh();
-	obj1->CreateMesh(vertices, indices, 24, 12);
+	obj1->CreateMesh(vertices, indices, 32, 12);
 	meshList.push_back(obj1);
 }
 
@@ -75,8 +82,13 @@ int main()
 		glm::vec3(0.0f, 0.0f, 0.0f),    // position
 		glm::vec3(0.0f, -1.0f, 0.0f),   // up
 		90.0f, 0.0f,                     // yaw, pitch
-		5.0f, 1.0f                      // movementSpeed, turnSpeed
+		5.0f, 0.5f                      // movementSpeed, turnSpeed
 	);
+
+	brickTexture = Texture("Textures/brick.png");
+	brickTexture.LoadTexture();
+	dirtTexture = Texture("Textures/dirt.png");
+	dirtTexture.LoadTexture();
 
 	glm::mat4 projection = glm::perspective(45.0f, bufferWidth / bufferHeight, 0.1f, 100.0f);
 
@@ -116,6 +128,8 @@ int main()
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 
+		//texture
+		dirtTexture.UseTexture();
 		meshList[0]->RenderMesh();
 
 		//swap buffers
