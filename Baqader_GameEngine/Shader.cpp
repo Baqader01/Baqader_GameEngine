@@ -5,6 +5,7 @@ Shader::Shader()
 	shaderID = 0;
 	uniformModel = 0; 
 	uniformProjection = 0;
+	uniformView = 0;
 }
 
 Shader::~Shader()
@@ -66,6 +67,11 @@ GLuint Shader::GetViewLocation()
 	return uniformView;
 }
 
+GLuint Shader::GetTimeLocation()
+{
+	return uniformTime;
+}
+
 void Shader::UseShader()
 {
 	glUseProgram(shaderID);
@@ -117,6 +123,7 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 	uniformModel = glGetUniformLocation(shaderID, "model");
 	uniformProjection = glGetUniformLocation(shaderID, "projection");
 	uniformView = glGetUniformLocation(shaderID, "view");
+	uniformTime = glGetUniformLocation(shaderID, "time");
 
 }
 
@@ -140,6 +147,7 @@ void Shader::AddShader(GLuint program, const char* shaderCode, GLenum type)
 	{
 		printf("Error compiling %d shader '%s'\n", type, eLog);
 		glGetShaderInfoLog(shader, sizeof(eLog), NULL, eLog);
+		std::cout << "Vertex Shader Compilation Error:\n" << eLog << std::endl;
 		return;
 	}
 

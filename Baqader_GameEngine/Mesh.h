@@ -1,5 +1,6 @@
 #pragma once
 #include <GL/glew.h>
+#include <vector>
 
 class Mesh
 {
@@ -7,9 +8,12 @@ public:
 
 	Mesh();
 	
-	void CreateMesh(GLfloat* vertices, unsigned int* indices, unsigned int numOfVertices, unsigned  int numOfIndices);
+	void CreateMesh(std::vector<GLfloat> vertices, std::vector<GLuint> indices);
 	void ClearMesh();
 	void RenderMesh();
+
+	std::vector<float> CreatePlane(int div, float width);
+	std::vector<GLuint> CreateIndices(int div);
 
 	~Mesh();
 
