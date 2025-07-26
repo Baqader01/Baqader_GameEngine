@@ -1,7 +1,6 @@
-#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION       // required exactly once in one .cpp file to compile stb.
 
 #include <vector>
-
 #include <glm/mat4x4.hpp>
 #include "glm/gtc/matrix_transform.hpp"
 #include <glm/gtc/type_ptr.hpp>
@@ -11,6 +10,7 @@
 #include "Window.h"
 #include "Camera.h"
 #include "Texture.h"
+#include "SeaRendering.h";
 
 //window dimensions
 const GLint WIDTH = 800, HEIGHT = 600;
@@ -26,6 +26,8 @@ Window mainWindow;
 Texture brickTexture;
 Texture dirtTexture;
 
+SeaRendering seaRend;
+
 std::vector<Mesh*> meshList;
 std::vector<Shader*> shaderList;
 Camera camera;
@@ -40,8 +42,8 @@ void CreateObjects()
 {
 	Mesh* obj1 = new Mesh();
 
-	std::vector<GLuint> indices = obj1->CreateIndices(1000);
-	std::vector<GLfloat> vertices = obj1->CreatePlane(1000, 100);
+	std::vector<GLuint> indices = obj1->CreateIndices(150);
+	std::vector<GLfloat> vertices = obj1->CreatePlane(150, 15);
 
 	obj1->CreateMesh(vertices, indices);
 	meshList.push_back(obj1);
@@ -77,6 +79,8 @@ int main()
 	dirtTexture = Texture("Textures/dirt.png");
 	//dirtTexture.LoadTexture();
 
+	seaRend = SeaRendering();
+
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), bufferWidth / bufferHeight, 0.1f, 100.0f);
 
 	while (!mainWindow.getShouldClose())
@@ -106,10 +110,11 @@ int main()
 		//model = glm::rotate(model, 120 * toRadians, glm::vec3(0.0f, 1.0f, 0));
 		model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4));
 
-		uniformModel = shaderList[0]->GetModelLocation();
 		uniformProjection = shaderList[0]->GetProjectionLocation();
-		uniformView = shaderList[0]->GetViewLocation();
-		uniformTime = shaderList[0]->GetTimeLocation();
+		uniformModel	  = shaderList[0]->GetModelLocation();
+		uniformView		  = shaderList[0]->GetViewLocation();
+		uniformTime		  = shaderList[0]->GetTimeLocation();
+		seaRend.GenerateWaves(5, shaderList[0]->GetShaderID());
 
 		//glUniform1f(uniformModel, triOffset);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));

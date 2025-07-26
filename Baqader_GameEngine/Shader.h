@@ -26,6 +26,8 @@ public:
 	void UseShader();
 	void ClearShader();
 
+	GLuint GetShaderID() const { return shaderID; };
+
 private:
 	GLuint shaderID, uniformModel, uniformProjection, uniformView, uniformTime;
 
