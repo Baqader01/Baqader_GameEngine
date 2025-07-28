@@ -11,6 +11,7 @@
 #include "Window.h"
 #include "Camera.h"
 #include "Texture.h"
+#include "Light.h"
 
 //window dimensions
 const GLint WIDTH = 800, HEIGHT = 600;
@@ -19,12 +20,14 @@ const float toRadians = 3.1459265f / 180.0f;
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
 
-GLuint uniformModel, uniformProjection, uniformView;
+GLuint uniformModel = 0, uniformProjection = 0, uniformView = 0, uniformAmbientColour = 0, uniformAmbientIntensity = 0;
 
 Window mainWindow;
 
 Texture brickTexture;
 Texture dirtTexture;
+
+Light mainLight;
 
 std::vector<Mesh*> meshList;
 std::vector<Shader*> shaderList;
@@ -88,6 +91,8 @@ int main()
 	dirtTexture = Texture("Textures/dirt.png");
 	dirtTexture.LoadTexture();
 
+	mainLight = Light(1.0f, 1.0f, 1.0f, 1.0f);
+
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), bufferWidth / bufferHeight, 0.1f, 100.0f);
 
 	while (!mainWindow.getShouldClose())
@@ -120,6 +125,10 @@ int main()
 		uniformModel = shaderList[0]->GetModelLocation();
 		uniformProjection = shaderList[0]->GetProjectionLocation();
 		uniformView = shaderList[0]->GetViewLocation();
+		uniformAmbientColour = shaderList[0]->GetAmbientColourLocation();
+		uniformAmbientIntensity = shaderList[0]->GetAmbientIntenityLocation();
+
+		mainLight.UseLight(uniformAmbientIntensity, uniformAmbientColour);
 
 		//glUniform1f(uniformModel, triOffset);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
