@@ -157,17 +157,17 @@ void Window::handleMouse(GLFWwindow* window, double xPos, double yPos)
 	
 	if (theWindow->mouseFirstMoved)
 	{
-		theWindow->lastX = xPos;
-		theWindow->lastY = yPos;
+		theWindow->lastX = (GLfloat) xPos;
+		theWindow->lastY = (GLfloat) yPos;
 
 		theWindow->mouseFirstMoved = false;
 	}
 
-	theWindow->changeX = xPos - theWindow->lastX;
-	theWindow->changeY = theWindow->lastY - yPos;
+	theWindow->changeX = (GLfloat) xPos - theWindow->lastX;
+	theWindow->changeY = theWindow->lastY - (GLfloat) yPos;
 
-	theWindow->lastX = xPos;
-	theWindow->lastY = yPos;
+	theWindow->lastX = (GLfloat) xPos;
+	theWindow->lastY = (GLfloat) yPos;
 
 	//std::cout << "x: " << theWindow->changeX << ", y:" << theWindow->changeY << std::endl;
 

@@ -41,13 +41,13 @@ static const char* fShader = "Shaders/shader.frag";
 
 void CreateObjects()
 {
-	unsigned int indices[] =
+	std::vector <GLuint> indices =
 	{
 		0, 1, 2,
 		2, 3, 0
 	};
 
-	GLfloat vertices[] =
+	std::vector<GLfloat> vertices =
 	{	 //positions			u     v			//rgb
 		 -10.0f, 0.0f,-10.0f,   0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   // V0 - bottom left
 		  10.0f, 0.0f,-10.0f,   1.0f, 0.0f,   0.0f, 0.0f, 1.0f,   // V1 - bottom right
@@ -56,7 +56,7 @@ void CreateObjects()
 	};
 
 	Mesh* obj1 = new Mesh();
-	obj1->CreateMesh(vertices, indices, sizeof(vertices) / sizeof(vertices[0]), sizeof(indices) / sizeof(indices[0]));
+	obj1->CreateMesh(vertices, indices);
 
 	meshList.push_back(obj1);
 }
@@ -73,8 +73,8 @@ int main()
 	mainWindow = Window(800, 600);
 	mainWindow.init();
 
-	GLfloat bufferWidth = mainWindow.GetBufferWidth();
-	GLfloat bufferHeight = mainWindow.GetBufferHeight();
+	GLfloat bufferWidth =  (GLfloat) mainWindow.GetBufferWidth();
+	GLfloat bufferHeight = (GLfloat) mainWindow.GetBufferHeight();
 
 	CreateObjects();
 	CreateShaders();
@@ -97,7 +97,7 @@ int main()
 
 	while (!mainWindow.getShouldClose())
 	{
-		GLfloat now = glfwGetTime();
+		GLfloat now = (GLfloat) glfwGetTime();
 		deltaTime = now - lastTime;
 		lastTime = now;
 
