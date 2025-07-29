@@ -1,41 +1,39 @@
-# Prerequisites
-*.d
+# Build output folders
+/Build/
+/Bin/
+/Debug/
+/Release/
+/x64/
+**/x64/
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
+# Visual Studio Intermediate/Debug files
 *.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
 *.exe
-*.out
-*.app
+*.pdb
+*.idb
+*.ilk
+*.log
+*.tlog
+*.lastbuildstate
+*.pch
+*.ipch
+*.vcxproj.FileListAbsolute.txt
 
+# Backup files
+*~    # Matches: w01zr42z.hhi~
+
+# Visual Studio user-specific files
 *.user
 *.suo
-*.vcxproj.user
 *.VC.db
-*.ipch
-/.vs/Baqader_GameEngine
-/Baqader_GameEngine/Debug
-/Debug
+*.VC.VC.opendb
+
+# Ignore entire Debug/Release folder trees
+**/Debug/
+**/Release/
+
+# Visual Studio temp folder
+.vs/
+
+# DLLs
+*.dll
