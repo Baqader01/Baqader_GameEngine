@@ -54,32 +54,32 @@ std::string Shader::ReadFile(const char* fileLocation)
 	return content;
 }
 
-GLuint Shader::GetProjectionLocation()
+GLuint Shader::GetProjectionLocation() const
 {
 	return uniformProjection;
 }
 
-GLuint Shader::GetModelLocation()
+GLuint Shader::GetModelLocation() const
 {
 	return uniformModel;
 }
 
-GLuint Shader::GetViewLocation()
+GLuint Shader::GetViewLocation() const
 {
 	return uniformView;
 }
 
-GLuint Shader::GetAmbientColourLocation()
+GLuint Shader::GetAmbientColourLocation() const
 {
 	return uniformAmbientColour;
 }
 
-GLuint Shader::GetAmbientIntenityLocation()
+GLuint Shader::GetAmbientIntenityLocation() const
 {
 	return uniformAmbientIntensity;
 }
 
-void Shader::UseShader()
+void Shader::UseShader() const
 {
 	glUseProgram(shaderID);
 }

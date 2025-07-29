@@ -41,21 +41,11 @@ static const char* fShader = "Shaders/shader.frag";
 
 void CreateObjects()
 {
-	std::vector <GLuint> indices =
-	{
-		0, 1, 2,
-		2, 3, 0
-	};
-
-	std::vector<GLfloat> vertices =
-	{	 //positions			u     v			//rgb
-		 -10.0f, 0.0f,-10.0f,   0.0f, 0.0f,   1.0f, 0.0f, 0.0f,   // V0 - bottom left
-		  10.0f, 0.0f,-10.0f,   1.0f, 0.0f,   0.0f, 0.0f, 1.0f,   // V1 - bottom right
-		  10.0f, 0.0f, 10.0f,   1.0f, 1.0f,   1.0f, 1.0f, 1.0f,   // V2 - top right
-		 -10.0f, 0.0f, 10.0f,   0.0f, 1.0f,   0.0f, 1.0f, 0.0f    // V3 - top left
-	};
-
 	Mesh* obj1 = new Mesh();
+
+	std::vector <GLuint> indices = obj1->CreateIndices(6); 
+	std::vector<GLfloat> vertices = obj1->PlaneVertices(10);
+
 	obj1->CreateMesh(vertices, indices);
 
 	meshList.push_back(obj1);
@@ -120,7 +110,7 @@ int main()
 		glm::mat4 model(1.0f);
 		//model = glm::translate(model, glm::vec3(0, 0.0f, -2.5f));
 		//model = glm::rotate(model, 120 * toRadians, glm::vec3(0.0f, 1.0f, 0));
-		model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4));
+		model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1));
 
 		uniformModel = shaderList[0]->GetModelLocation();
 		uniformProjection = shaderList[0]->GetProjectionLocation();
@@ -136,7 +126,6 @@ int main()
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 
 		//texture
-		dirtTexture.UseTexture();
 		meshList[0]->RenderMesh();
 
 		//swap buffers

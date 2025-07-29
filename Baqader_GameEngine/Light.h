@@ -8,7 +8,7 @@ public:
 	Light();
 	Light(GLfloat red, GLfloat green, GLfloat blue, GLfloat ambientIntensity);
 
-	void UseLight(GLuint ambientIntensityLocation, GLuint ambientColourLocation);
+	void UseLight(GLuint ambientIntensityLocation, GLuint ambientColourLocation) const;
 
 	~Light();
 

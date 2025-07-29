@@ -18,13 +18,13 @@ public:
 
 	std::string ReadFile(const char* fileLocation);
 
-	GLuint GetProjectionLocation();
-	GLuint GetModelLocation();
-	GLuint GetViewLocation();
-	GLuint GetAmbientColourLocation();
-	GLuint GetAmbientIntenityLocation();
+	GLuint GetProjectionLocation() const;
+	GLuint GetModelLocation() const;
+	GLuint GetViewLocation() const;
+	GLuint GetAmbientColourLocation() const;
+	GLuint GetAmbientIntenityLocation() const;
 
-	void UseShader();
+	void UseShader() const;
 	void ClearShader();
 
 private:

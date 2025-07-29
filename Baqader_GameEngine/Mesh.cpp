@@ -1,5 +1,9 @@
 #include "Mesh.h"
 
+inline glm::vec3 position(float x, float y, float z) { return glm::vec3(x, y, z); }
+inline glm::vec2 uv(float u, float v) { return glm::vec2(u, v); }
+inline glm::vec3 colour(float red, float green, float blue) { return glm::vec3(red, green, blue); }
+
 Mesh::Mesh()
 {
 	VAO = 0;
@@ -37,7 +41,7 @@ void Mesh::CreateMesh(std::vector<GLfloat> vertices, std::vector<GLuint> indices
 	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
-void Mesh::RenderMesh()
+void Mesh::RenderMesh() const
 {
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
@@ -47,6 +51,93 @@ void Mesh::RenderMesh()
 
 	glBindVertexArray(0);
 	glUseProgram(0);
+}
+
+std::vector<GLuint> Mesh::CreateIndices(int squares)
+{
+	std::vector<GLuint> indices;
+	indices.reserve(6 * squares); // 6 indices per square (2 triangles)
+
+	for (int i = 0; i < squares; i++)
+	{
+		int base = i * 4; // 4 vertices per quad
+
+		//Top triangle
+		indices.push_back(base);
+		indices.push_back(base + 1);
+		indices.push_back(base + 2);
+
+		//Bottom triangle
+		indices.push_back(base + 2);
+		indices.push_back(base + 3);
+		indices.push_back(base);
+	}
+
+	//https://www.youtube.com/watch?v=FKLbihqDLsg&t=66s
+	//https://youtu.be/FKLbihqDLsg?si=_17Q0t-dLSjNAl-W&t=103
+
+	return indices;
+}
+
+std::vector<GLfloat> Mesh::PlaneVertices(GLfloat width) //e.g. 5
+{
+	glm::vec3 red(1.0f, 0.f, 0.0f);
+	glm::vec3 white(1.0f, 1.f, 1.0f);
+	glm::vec3 blue(0.0f, 0.0f, 1.0f);
+	glm::vec3 orange(1.0f, 0.5f, 0.0f);
+	glm::vec3 green(0.0f, 1.0f, 0.0f);
+	glm::vec3 yellow(1.0f, 1.0f, 0.0f);
+
+	//front
+	plane(position(-width, -width, 0.0f), uv(0.0f, 0.0f), red); // V0 - bottom left
+	plane(position(width, -width, 0.0f), uv(1.0f, 0.0f), red);  // V1 - bottom right
+	plane(position(width, width, 0.0f), uv(1.0f, 1.0f), red);   // V2 - top right
+	plane(position(-width, width, 0.0f), uv(0.0f, 1.0f), red);  // V3 - top left
+
+	//top
+	plane(position(-width, width, 0.0f), uv(0.0f, 0.0f), white);	  // V4 - bottom left
+	plane(position(width, width, 0.0f), uv(1.0f, 0.0f), white);		  // V5 - bottom right
+	plane(position(width, width, width * 2), uv(1.0f, 1.0f), white);  // V6 - top right
+	plane(position(-width, width, width * 2), uv(0.0f, 1.0f), white); // V7 - top left
+
+	//right
+	plane(position(-width, -width, 0.0f), uv(0.0f, 0.0f), blue);      // V8 - bottom left
+	plane(position(-width, -width, width * 2), uv(1.0f, 0.0f), blue); // V9 - bottom right
+	plane(position(-width, width, width * 2), uv(1.0f, 1.0f), blue);  // V10 - top right
+	plane(position(-width, width, 0.0f), uv(0.0f, 1.0f), blue);		  // V11 - top left
+
+	//back
+
+	plane(position(-width, -width, width * 2), uv(0.0f, 0.0f), orange);  // V12 - bottom left
+	plane(position(width, -width, width * 2), uv(1.0f, 0.0f), orange);   // V13 - bottom right
+	plane(position(width, width, width * 2), uv(1.0f, 1.0f), orange);	 // V14 - top right
+	plane(position(-width, width, width * 2), uv(0.0f, 1.0f), orange);   // V15 - top left
+
+	//left
+	plane(position(width, -width, 0.0f), uv(0.0f, 0.0f), green);	  // V16 - bottom left
+	plane(position(width, -width, width * 2), uv(1.0f, 0.0f), green); // V17 - bottom right
+	plane(position(width, width, width * 2), uv(1.0f, 1.0f), green);  // V18 - top right
+	plane(position(width, width, 0.0f), uv(0.0f, 1.0f), green);		  // V19 - top left
+
+	//bottom
+	plane(position(-width, -width, 0.0f), uv(0.0f, 0.0f), yellow);      // V20 - bottom left
+	plane(position(width, -width, 0.0f), uv(1.0f, 0.0f), yellow);       // V21 - bottom right
+	plane(position(width, -width, width * 2), uv(1.0f, 1.0f), yellow);  // V22 - top right
+	plane(position(-width, -width, width * 2), uv(0.0f, 1.0f), yellow); // V23 - top left
+
+	//https://youtu.be/FKLbihqDLsg?si=SxWQxdszzjFUFJGP&t=206
+
+	return vertices;
+}
+
+void Mesh::plane(glm::vec3 position, glm::vec2 uv, glm::vec3 colour)
+{
+	vertices.insert(vertices.end(), 
+	{
+		position.x, position.y, position.z,
+		uv.x, uv.y,
+		colour.x, colour.y, colour.z,
+	});
 }
 
 void Mesh::ClearMesh()

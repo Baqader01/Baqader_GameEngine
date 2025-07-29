@@ -17,7 +17,7 @@ void main()
 {
 	vec4 ambientColour = vec4(directionalLight.colour, 1.0f) * directionalLight.ambientIntensity;
 
-	//colour = vec4(vCol, 1);
-	colour = texture(mainTexture, textureCoordinate) * ambientColour;
+	colour = vec4(vCol, 1);
+	//colour = texture(mainTexture, textureCoordinate) * ambientColour;
 	
 }
