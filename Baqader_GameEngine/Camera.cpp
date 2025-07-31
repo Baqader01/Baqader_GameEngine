@@ -40,7 +40,7 @@ void Camera::keyControl(bool* keys, GLfloat deltaTime)
 	if (keys[GLFW_KEY_D]) position += right * velocity;
 
 	// Debug: Print camera position
-	std::cout << "Camera Pos: (" << position.x << ", " << position.y << ", " << position.z << ")" << std::endl;
+	//std::cout << "Camera Pos: (" << position.x << ", " << position.y << ", " << position.z << ")" << std::endl;
 }
 
 void Camera::mouseControl(GLfloat xChange, GLfloat yChange)

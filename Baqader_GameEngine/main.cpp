@@ -20,7 +20,9 @@ const float toRadians = 3.1459265f / 180.0f;
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
 
-GLuint uniformModel = 0, uniformProjection = 0, uniformView = 0, uniformAmbientColour = 0, uniformAmbientIntensity = 0;
+GLuint uniformModel = 0, uniformProjection = 0, uniformView = 0, 
+	   uniformAmbientColour = 0, uniformAmbientIntensity = 0,
+	   uniformDirection = 0,     uniformDiffuseIntensity = 0;
 
 Window mainWindow;
 
@@ -44,9 +46,12 @@ void CreateObjects()
 	Mesh* obj1 = new Mesh();
 
 	std::vector <GLuint> indices = obj1->CreateIndices(6); 
-	std::vector<GLfloat> vertices = obj1->PlaneVertices(10);
-
+	std::vector<GLfloat> vertices = obj1->PlaneVertices(0.25f);
+	
 	obj1->CreateMesh(vertices, indices);
+
+	int vertexLength = 11, normalOffset = 5;
+	obj1->calculateNormals(vertexLength, normalOffset);
 
 	meshList.push_back(obj1);
 }
@@ -81,7 +86,8 @@ int main()
 	dirtTexture = Texture("Textures/dirt.png");
 	dirtTexture.LoadTexture();
 
-	mainLight = Light(1.0f, 1.0f, 1.0f, 1.0f);
+	mainLight = Light(1.0f, 1.0f, 1.0f, 1.0f, 2.0f,
+		-1.0f, -2.0f, 1.0f);
 
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), bufferWidth / bufferHeight, 0.1f, 100.0f);
 
@@ -110,15 +116,17 @@ int main()
 		glm::mat4 model(1.0f);
 		//model = glm::translate(model, glm::vec3(0, 0.0f, -2.5f));
 		//model = glm::rotate(model, 120 * toRadians, glm::vec3(0.0f, 1.0f, 0));
-		model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1));
+		//model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1));
 
 		uniformModel = shaderList[0]->GetModelLocation();
 		uniformProjection = shaderList[0]->GetProjectionLocation();
 		uniformView = shaderList[0]->GetViewLocation();
 		uniformAmbientColour = shaderList[0]->GetAmbientColourLocation();
 		uniformAmbientIntensity = shaderList[0]->GetAmbientIntenityLocation();
+		uniformDirection = shaderList[0]->GetDirectionLocation();
+		uniformDiffuseIntensity = shaderList[0]->GetDiffuseIntensityLocation();
 
-		mainLight.UseLight(uniformAmbientIntensity, uniformAmbientColour);
+		mainLight.UseLight(uniformAmbientIntensity, uniformAmbientColour, uniformDiffuseIntensity, uniformDirection);
 
 		//glUniform1f(uniformModel, triOffset);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
