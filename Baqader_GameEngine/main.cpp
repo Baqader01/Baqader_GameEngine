@@ -86,8 +86,9 @@ int main()
 	dirtTexture = Texture("Textures/dirt.png");
 	dirtTexture.LoadTexture();
 
-	mainLight = Light(1.0f, 1.0f, 1.0f, 1.0f, 2.0f,
-		-1.0f, -2.0f, 1.0f);
+	glm::vec3 colour = glm::vec3(1.0f, 1.0f, 1.0f);
+	glm::vec3 direction = glm::vec3(2.0f, -1.0f, -2.0f);
+	mainLight = Light(colour, 1.0f, direction, 1.0f);
 
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), bufferWidth / bufferHeight, 0.1f, 100.0f);
 
