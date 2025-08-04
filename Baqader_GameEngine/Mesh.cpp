@@ -148,24 +148,9 @@ void Mesh::plane(glm::vec3 position, glm::vec2 uv, glm::vec3 normal)
 
 void Mesh::ClearMesh()
 {
-	if (IBO != 0)
-	{
-		glDeleteBuffers(1, &IBO);
-		IBO = 0;
-	}
-
-	if (VBO != 0)
-	{
-		glDeleteBuffers(1, &VBO);
-		VBO = 0;
-	}
-
-	if (VAO != 0)
-	{
-		glDeleteVertexArrays(1, &VAO);
-		VAO = 0;
-	}
-
+	if (IBO != 0) glDeleteBuffers(1, &IBO); IBO = 0;
+	if (VBO != 0) glDeleteBuffers(1, &VBO); VBO = 0;
+	if (VAO != 0) glDeleteVertexArrays(1, &VAO); VAO = 0;
 }
 
 Mesh::~Mesh()
