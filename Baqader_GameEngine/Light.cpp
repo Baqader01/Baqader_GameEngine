@@ -6,16 +6,22 @@ Light::Light()
 	m_ambientIntensity = 1.0f;
 }
 
-Light::Light(GLfloat red, GLfloat green, GLfloat blue, GLfloat ambientIntensity)
+Light::Light(glm::vec3 colour, GLfloat ambientIntensity, glm::vec3 direction, GLfloat diffuseIntensity)
 {
-	m_colour = glm::vec3(red, green, blue);
+	m_colour = colour;
 	m_ambientIntensity = ambientIntensity;
+
+	m_direction = direction;
+	m_diffuseIntensity = diffuseIntensity;
 }
 
-void Light::UseLight(GLuint ambientIntensityLocation, GLuint ambientColourLocation) const
+void Light::UseLight(GLuint ambientIntensityLocation, GLuint ambientColourLocation, GLuint diffuseDirectionLocation, GLuint diffuseIntensityLocation) const
 {
 	glUniform3f(ambientColourLocation, m_colour.x, m_colour.y, m_colour.z);
 	glUniform1f(ambientIntensityLocation, m_ambientIntensity);
+
+	glUniform3f(diffuseDirectionLocation, m_direction.x, m_direction.y, m_direction.z);
+	glUniform1f(diffuseIntensityLocation, m_diffuseIntensity);
 }
 
 Light::~Light()

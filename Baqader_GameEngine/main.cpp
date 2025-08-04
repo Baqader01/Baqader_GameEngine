@@ -20,7 +20,9 @@ const float toRadians = 3.1459265f / 180.0f;
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
 
-GLuint uniformModel = 0, uniformProjection = 0, uniformView = 0, uniformAmbientColour = 0, uniformAmbientIntensity = 0;
+GLuint uniformModel = 0, uniformProjection = 0, uniformView = 0,
+	uniformAmbientColour = 0, uniformAmbientIntensity = 0,
+	uniformDiffuseDirection = 0, uniformDiffuseIntensity = 0;
 
 Window mainWindow;
 
@@ -81,7 +83,9 @@ int main()
 	dirtTexture = Texture("Textures/dirt.png");
 	dirtTexture.LoadTexture();
 
-	mainLight = Light(1.0f, 1.0f, 1.0f, 1.0f);
+	glm::vec3 lightColour = glm::vec3(1.0f, 1.0f, 1.0f);     // Pure white sunlight
+	glm::vec3 lightDirection = glm::vec3(-1.0f, -1.0f, -1.0f); // Diagonal "sun" (like early morning or afternoon)
+		mainLight = Light(lightColour, 0.2f, lightDirection, 1.0f);
 
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), bufferWidth / bufferHeight, 0.1f, 100.0f);
 
@@ -117,8 +121,10 @@ int main()
 		uniformView = shaderList[0]->GetViewLocation();
 		uniformAmbientColour = shaderList[0]->GetAmbientColourLocation();
 		uniformAmbientIntensity = shaderList[0]->GetAmbientIntenityLocation();
+		uniformDiffuseDirection = shaderList[0]->GetDiffuseDirectionLocation();
+		uniformDiffuseIntensity = shaderList[0]->GetDiffuseIntensityLocation();
 
-		mainLight.UseLight(uniformAmbientIntensity, uniformAmbientColour);
+		mainLight.UseLight(uniformAmbientIntensity, uniformAmbientColour, uniformDiffuseDirection, uniformDiffuseIntensity);
 
 		//glUniform1f(uniformModel, triOffset);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
