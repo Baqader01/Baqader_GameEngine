@@ -20,6 +20,7 @@ const float toRadians = 3.1459265f / 180.0f;
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
 
+GLuint uniformColour;
 GLuint uniformModel = 0, uniformProjection = 0, uniformView = 0,
 	uniformAmbientColour = 0, uniformAmbientIntensity = 0,
 	uniformDiffuseDirection = 0, uniformDiffuseIntensity = 0;
@@ -35,6 +36,9 @@ std::vector<Mesh*> meshList;
 std::vector<Shader*> shaderList;
 Camera camera;
 
+std::vector <GLuint> indices;
+std::vector<GLfloat> vertices;
+
 //vertex shader
 static const char* vShader = "Shaders/shader.vert";
 
@@ -43,14 +47,23 @@ static const char* fShader = "Shaders/shader.frag";
 
 void CreateObjects()
 {
-	Mesh* obj1 = new Mesh();
+	Mesh* cubeMesh = new Mesh();
 
-	std::vector <GLuint> indices = obj1->CreateIndices(6); 
-	std::vector<GLfloat> vertices = obj1->PlaneVertices(10);
+	indices = cubeMesh->CreateIndices(6);
+	vertices = cubeMesh->RenderCube(10);
 
-	obj1->CreateMesh(vertices, indices);
+	cubeMesh->CreateMesh(vertices, indices);
 
-	meshList.push_back(obj1);
+	meshList.push_back(cubeMesh);
+
+	Mesh* obj2 = new Mesh();
+
+	indices = obj2->CreateIndices(6);
+	vertices = obj2->RenderCube(10);
+
+	obj2->CreateMesh(vertices, indices);
+
+	meshList.push_back(obj2);
 }
 
 void CreateShaders()
@@ -123,6 +136,7 @@ int main()
 		uniformAmbientIntensity = shaderList[0]->GetAmbientIntenityLocation();
 		uniformDiffuseDirection = shaderList[0]->GetDiffuseDirectionLocation();
 		uniformDiffuseIntensity = shaderList[0]->GetDiffuseIntensityLocation();
+		uniformColour = shaderList[0]->GetColourLocation();
 
 		mainLight.UseLight(uniformAmbientIntensity, uniformAmbientColour, uniformDiffuseDirection, uniformDiffuseIntensity);
 
@@ -131,14 +145,34 @@ int main()
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 
-		//texture
+		// Cube 1 - left
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -5.0f)); // left
+		model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform3f(uniformColour, 0.0f, 1.0f, 1.0f);
+
 		meshList[0]->RenderMesh();
+	
+		glUseProgram(0);
+
+		shaderList[0]->UseShader();
+
+		// Cube 2 - right
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(2.0f, 0.0f, -5.0f)); // right
+		model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+		glUniform3f(uniformColour, 1.0f, 0.0f, 1.0f);
+
+		meshList[1]->RenderMesh();
 
 		//swap buffers
 		mainWindow.swapBuffers();
 
 	}
-
 
 	glfwTerminate();
 	return 0;

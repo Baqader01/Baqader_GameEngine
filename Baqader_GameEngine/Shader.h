@@ -25,12 +25,13 @@ public:
 	GLuint GetAmbientIntenityLocation() const;
 	GLuint GetDiffuseDirectionLocation() const;
 	GLuint GetDiffuseIntensityLocation() const;
+	GLuint GetColourLocation() const;
 
 	void UseShader() const;
 	void ClearShader();
 
 private:
-	GLuint shaderID,
+	GLuint shaderID, uniformColour,
 		uniformModel, uniformProjection, uniformView, 
 		uniformAmbientColour, uniformAmbientIntensity,
 		uniformDiffuseDirection, uniformDiffuseIntensity;

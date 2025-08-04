@@ -13,9 +13,9 @@ public:
 	void RenderMesh() const;
 
 	std::vector<GLuint> CreateIndices(int div);
-	std::vector<GLfloat> PlaneVertices(GLfloat width);
+	std::vector<GLfloat> RenderCube(GLfloat width);
 
-	void plane(glm::vec3 position, glm::vec2 uv, glm::vec3 colour, glm::vec3 normal);
+	void plane(glm::vec3 position, glm::vec2 uv, glm::vec3 normal);
 
 	~Mesh();
 
@@ -23,9 +23,6 @@ private:
 	GLuint VAO, VBO, IBO;
 	std::vector<GLfloat> vertices;
 	std::vector<GLuint> indices;
-
-	GLsizei indexCount;
-
 
 };
 

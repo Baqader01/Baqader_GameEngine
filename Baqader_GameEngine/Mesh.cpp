@@ -1,4 +1,5 @@
 #include "Mesh.h"
+#include <iostream>
 
 inline glm::vec3 position(float x, float y, float z) { return glm::vec3(x, y, z); }
 inline glm::vec2 uv(float u, float v) { return glm::vec2(u, v); }
@@ -10,12 +11,10 @@ Mesh::Mesh()
 	VAO = 0;
 	VBO = 0;
 	IBO = 0;
-	indexCount = 0;
 }
 
 void Mesh::CreateMesh(std::vector<GLfloat> vertices, std::vector<GLuint> indices)
 {
-	indexCount = indices.size();
 
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
@@ -28,17 +27,14 @@ void Mesh::CreateMesh(std::vector<GLfloat> vertices, std::vector<GLuint> indices
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 11, 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, 0);
 	glEnableVertexAttribArray(0);
 
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 11, (void*)(sizeof(float) * 3));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 3));
 	glEnableVertexAttribArray(1);
 
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 11, (void*)(sizeof(float) * 5));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 5));
 	glEnableVertexAttribArray(2);
-
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 11, (void*)(sizeof(float) * 8));
-	glEnableVertexAttribArray(3);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -50,7 +46,7 @@ void Mesh::RenderMesh() const
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
-	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
 
 	glBindVertexArray(0);
@@ -59,7 +55,8 @@ void Mesh::RenderMesh() const
 
 std::vector<GLuint> Mesh::CreateIndices(int squares)
 {
-	std::vector<GLuint> indices;
+	indices.clear();
+
 	indices.reserve(6 * squares); // 6 indices per square (2 triangles)
 
 	for (int i = 0; i < squares; i++)
@@ -83,14 +80,11 @@ std::vector<GLuint> Mesh::CreateIndices(int squares)
 	return indices;
 }
 
-std::vector<GLfloat> Mesh::PlaneVertices(GLfloat width) //e.g. 5
+std::vector<GLfloat> Mesh::RenderCube(GLfloat width) //e.g. 5
 {
-	glm::vec3 red    (0.2f, 1.0f, 0.2f);
-	glm::vec3 blue   (0.2f, 1.0f, 0.2f);
-	glm::vec3 white  (0.2f, 1.0f, 0.2f);
-	glm::vec3 green  (0.2f, 1.0f, 0.2f);
-	glm::vec3 orange (0.2f, 1.0f, 0.2f);
-	glm::vec3 yellow (0.2f, 1.0f, 0.2f);
+	vertices.clear();
+
+	glm::vec3 green (0.2f, 1.0f, 0.2f);
 
 	/*glm::vec3 red(1.0f, 0.f, 0.0f);
 	glm::vec3 blue(0.0f, 0.0f, 1.0f);
@@ -100,53 +94,54 @@ std::vector<GLfloat> Mesh::PlaneVertices(GLfloat width) //e.g. 5
 	glm::vec3 yellow(1.0f, 1.0f, 0.0f);*/
 	
 	//front
-	plane(position(-width, -width, 0.0f), uv(0.0f, 0.0f), red, normal(0.0f, 0.0f, -1.0f)); // V0 - bottom left
-	plane(position( width, -width, 0.0f), uv(1.0f, 0.0f), red, normal(0.0f, 0.0f, -1.0f));  // V1 - bottom right
-	plane(position( width, width, 0.0f), uv(1.0f, 1.0f), red, normal(0.0f,  0.0f, -1.0f));   // V2 - top right
-	plane(position(-width, width, 0.0f), uv(0.0f, 1.0f), red, normal(0.0f,  0.0f, -1.0f));  // V3 - top left
+	plane(position(-width, -width, 0.0f), uv(0.0f, 0.0f), normal(0.0f, 0.0f, -1.0f)); // V0 - bottom left
+	plane(position( width, -width, 0.0f), uv(1.0f, 0.0f), normal(0.0f, 0.0f, -1.0f));  // V1 - bottom right
+	plane(position( width, width, 0.0f), uv(1.0f, 1.0f), normal(0.0f,  0.0f, -1.0f));   // V2 - top right
+	plane(position(-width, width, 0.0f), uv(0.0f, 1.0f), normal(0.0f,  0.0f, -1.0f));  // V3 - top left
 
 	//top
-	plane(position(-width, width, 0.0f), uv(0.0f, 0.0f), white, normal(0.0f, 1.0f, 0.0f));	      // V4 - bottom left
-	plane(position( width, width, 0.0f), uv(1.0f, 0.0f), white, normal(0.0f, 1.0f, 0.0f));		  // V5 - bottom right
-	plane(position( width, width, width * 2), uv(1.0f, 1.0f), white, normal(0.0f, 1.0f, 0.0f));  // V6 - top right
-	plane(position(-width, width, width * 2), uv(0.0f, 1.0f), white, normal(0.0f, 1.0f, 0.0f));  // V7 - top left
+	plane(position(-width, width, 0.0f), uv(0.0f, 0.0f), normal(0.0f, 1.0f, 0.0f));	      // V4 - bottom left
+	plane(position( width, width, 0.0f), uv(1.0f, 0.0f), normal(0.0f, 1.0f, 0.0f));		  // V5 - bottom right
+	plane(position( width, width, width * 2), uv(1.0f, 1.0f), normal(0.0f, 1.0f, 0.0f));  // V6 - top right
+	plane(position(-width, width, width * 2), uv(0.0f, 1.0f), normal(0.0f, 1.0f, 0.0f));  // V7 - top left
 
 	//right
-	plane(position(-width, -width, 0.0f), uv(0.0f, 0.0f), blue, normal(-1.0f, 0.0f, 0.0f));      // V8 - bottom left
-	plane(position(-width, -width, width * 2), uv(1.0f, 0.0f), blue, normal(-1.0f, 0.0f, 0.0f)); // V9 - bottom right
-	plane(position(-width, width, width * 2), uv(1.0f, 1.0f), blue, normal(-1.0f, 0.0f, 0.0f));  // V10 - top right
-	plane(position(-width, width, 0.0f), uv(0.0f, 1.0f), blue, normal(-1.0f, 0.0f, 0.0f));		 // V11 - top left
+	plane(position(-width, -width, 0.0f), uv(0.0f, 0.0f), normal(-1.0f, 0.0f, 0.0f));      // V8 - bottom left
+	plane(position(-width, -width, width * 2), uv(1.0f, 0.0f), normal(-1.0f, 0.0f, 0.0f)); // V9 - bottom right
+	plane(position(-width, width, width * 2), uv(1.0f, 1.0f), normal(-1.0f, 0.0f, 0.0f));  // V10 - top right
+	plane(position(-width, width, 0.0f), uv(0.0f, 1.0f), normal(-1.0f, 0.0f, 0.0f));		 // V11 - top left
 
 	//back
-	plane(position(-width, -width, width * 2), uv(0.0f, 0.0f), orange, normal(0.0f, 0.0f, 1.0f));  // V12 - bottom left
-	plane(position( width, -width, width * 2), uv(1.0f, 0.0f), orange, normal(0.0f, 0.0f, 1.0f));  // V13 - bottom right
-	plane(position( width,  width, width * 2), uv(1.0f, 1.0f), orange, normal(0.0f, 0.0f, 1.0f));  // V14 - top right
-	plane(position(-width,  width, width * 2), uv(0.0f, 1.0f), orange, normal(0.0f, 0.0f, 1.0f));  // V15 - top left
+	plane(position(-width, -width, width * 2), uv(0.0f, 0.0f), normal(0.0f, 0.0f, 1.0f));  // V12 - bottom left
+	plane(position( width, -width, width * 2), uv(1.0f, 0.0f), normal(0.0f, 0.0f, 1.0f));  // V13 - bottom right
+	plane(position( width,  width, width * 2), uv(1.0f, 1.0f), normal(0.0f, 0.0f, 1.0f));  // V14 - top right
+	plane(position(-width,  width, width * 2), uv(0.0f, 1.0f), normal(0.0f, 0.0f, 1.0f));  // V15 - top left
 
 	//left
-	plane(position(width, -width, 0.0f), uv(0.0f, 0.0f), green, normal(1.0f, 0.0f, 0.0f));	    // V16 - bottom left
-	plane(position(width, -width, width * 2), uv(1.0f, 0.0f), green, normal(1.0f, 0.0f, 0.0f)); // V17 - bottom right
-	plane(position(width,  width, width * 2), uv(1.0f, 1.0f), green, normal(1.0f, 0.0f, 0.0f)); // V18 - top right
-	plane(position(width,  width, 0.0f), uv(0.0f, 1.0f), green, normal(1.0f, 0.0f, 0.0f));	    // V19 - top left
+	plane(position(width, -width, 0.0f), uv(0.0f, 0.0f), normal(1.0f, 0.0f, 0.0f));	    // V16 - bottom left
+	plane(position(width, -width, width * 2), uv(1.0f, 0.0f), normal(1.0f, 0.0f, 0.0f)); // V17 - bottom right
+	plane(position(width,  width, width * 2), uv(1.0f, 1.0f), normal(1.0f, 0.0f, 0.0f)); // V18 - top right
+	plane(position(width,  width, 0.0f), uv(0.0f, 1.0f), normal(1.0f, 0.0f, 0.0f));	    // V19 - top left
 
 	//bottom
-	plane(position(-width, -width, 0.0f), uv(0.0f, 0.0f), yellow, normal(0.0f, -1.0f, 0.0f));      // V20 - bottom left
-	plane(position( width, -width, 0.0f), uv(1.0f, 0.0f), yellow, normal(0.0f, -1.0f, 0.0f));       // V21 - bottom right
-	plane(position( width, -width, width * 2), uv(1.0f, 1.0f), yellow, normal(0.0f, -1.0f, 0.0f));  // V22 - top right
-	plane(position(-width, -width, width * 2), uv(0.0f, 1.0f), yellow, normal(0.0f, -1.0f, 0.0f)); // V23 - top left
+	plane(position(-width, -width, 0.0f), uv(0.0f, 0.0f), normal(0.0f, -1.0f, 0.0f));      // V20 - bottom left
+	plane(position( width, -width, 0.0f), uv(1.0f, 0.0f), normal(0.0f, -1.0f, 0.0f));       // V21 - bottom right
+	plane(position( width, -width, width * 2), uv(1.0f, 1.0f), normal(0.0f, -1.0f, 0.0f));  // V22 - top right
+	plane(position(-width, -width, width * 2), uv(0.0f, 1.0f), normal(0.0f, -1.0f, 0.0f)); // V23 - top left
 
 	//https://youtu.be/FKLbihqDLsg?si=SxWQxdszzjFUFJGP&t=206
+
+	std::cout << "Creating mesh with " << vertices.size() << " vertices.\n";
 
 	return vertices;
 }
 
-void Mesh::plane(glm::vec3 position, glm::vec2 uv, glm::vec3 colour, glm::vec3 normal)
+void Mesh::plane(glm::vec3 position, glm::vec2 uv, glm::vec3 normal)
 {
 	vertices.insert(vertices.end(), 
 	{
 		position.x, position.y, position.z,
 		uv.x, uv.y,
-		colour.x, colour.y, colour.z,
 		normal.x, normal.y, normal.z
 	});
 }
@@ -171,7 +166,6 @@ void Mesh::ClearMesh()
 		VAO = 0;
 	}
 
-	indexCount = 0;
 }
 
 Mesh::~Mesh()
