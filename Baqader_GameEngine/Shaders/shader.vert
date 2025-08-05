@@ -21,4 +21,7 @@ void main()
 
 	colour = instanceColour;
 	//textureCoordinate = texture;
+
+	Normal = mat3(transpose(inverse(model))) * normal;
+	
 }

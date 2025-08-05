@@ -134,6 +134,16 @@ void Window::handleKeys(GLFWwindow* window, int key, int code, int action, int m
 	Window* mainWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
+		//int mode = glfwGetInputMode(window, GLFW_CURSOR);
+		//if (mode == GLFW_CURSOR_DISABLED)
+		//{
+		//	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		//}
+		//else
+		//{
+		//	glfwSetWindowShouldClose(window, GL_TRUE);
+		//}
+		
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 

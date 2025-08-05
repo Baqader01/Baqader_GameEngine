@@ -3,9 +3,11 @@
 Shader::Shader()
 {
 	shaderID = 0;
+
 	uniformModel = 0; 
 	uniformProjection = 0;
 	uniformView = 0;
+
 	uniformAmbientColour = 0;
 	uniformAmbientIntensity = 0;
 	uniformDiffuseDirection = 0;
@@ -146,6 +148,7 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 
 	uniformModel = glGetUniformLocation(shaderID, "model");
 	uniformProjection = glGetUniformLocation(shaderID, "projection");
+
 	uniformView = glGetUniformLocation(shaderID, "view");
 	uniformAmbientColour = glGetUniformLocation(shaderID, "directionalLight.colour");
 	uniformAmbientIntensity = glGetUniformLocation(shaderID, "directionalLight.ambientIntensity");
@@ -173,8 +176,8 @@ void Shader::AddShader(GLuint program, const char* shaderCode, GLenum type)
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &result);
 	if (!result)
 	{
-		printf("Error compiling %d shader '%s'\n", type, eLog);
 		glGetShaderInfoLog(shader, sizeof(eLog), NULL, eLog);
+		printf("Error compiling %d shader '%s'\n", type, eLog);
 		return;
 	}
 

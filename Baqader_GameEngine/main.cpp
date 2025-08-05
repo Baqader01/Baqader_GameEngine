@@ -131,14 +131,15 @@ int main()
 		glm::mat4 model(1.0f);
 		//model = glm::translate(model, glm::vec3(0, 0.0f, -2.5f));
 		//model = glm::rotate(model, 120 * toRadians, glm::vec3(0.0f, 1.0f, 0));
-		model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1));
+		//model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1));
 
 		uniformModel = shaderList[0]->GetModelLocation();
 		uniformProjection = shaderList[0]->GetProjectionLocation();
 		uniformView = shaderList[0]->GetViewLocation();
 		uniformAmbientColour = shaderList[0]->GetAmbientColourLocation();
 		uniformAmbientIntensity = shaderList[0]->GetAmbientIntenityLocation();
-		uniformDiffuseDirection = shaderList[0]->GetDiffuseDirectionLocation();
+
+    uniformDiffuseDirection = shaderList[0]->GetDiffuseDirectionLocation();
 		uniformDiffuseIntensity = shaderList[0]->GetDiffuseIntensityLocation();
 		uniformColour = shaderList[0]->GetColourLocation();
 
