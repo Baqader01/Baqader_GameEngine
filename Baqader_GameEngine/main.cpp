@@ -13,6 +13,7 @@
 #include "Texture.h"
 #include "Light.h"
 
+
 //window dimensions
 const GLint WIDTH = 800, HEIGHT = 600;
 const float toRadians = 3.1459265f / 180.0f;
@@ -20,9 +21,10 @@ const float toRadians = 3.1459265f / 180.0f;
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
 
-GLuint uniformModel = 0, uniformProjection = 0, uniformView = 0, 
-	   uniformAmbientColour = 0, uniformAmbientIntensity = 0,
-	   uniformDirection = 0,     uniformDiffuseIntensity = 0;
+GLuint uniformColour;
+GLuint uniformModel = 0, uniformProjection = 0, uniformView = 0,
+	uniformAmbientColour = 0, uniformAmbientIntensity = 0,
+	uniformDiffuseDirection = 0, uniformDiffuseIntensity = 0;
 
 Window mainWindow;
 
@@ -35,6 +37,9 @@ std::vector<Mesh*> meshList;
 std::vector<Shader*> shaderList;
 Camera camera;
 
+std::vector <GLuint> indices;
+std::vector<GLfloat> vertices;
+
 //vertex shader
 static const char* vShader = "Shaders/shader.vert";
 
@@ -43,17 +48,23 @@ static const char* fShader = "Shaders/shader.frag";
 
 void CreateObjects()
 {
-	Mesh* obj1 = new Mesh();
+	Mesh* cubeMesh = new Mesh();
 
-	std::vector <GLuint> indices = obj1->CreateIndices(6); 
-	std::vector<GLfloat> vertices = obj1->PlaneVertices(0.25f);
-	
-	obj1->CreateMesh(vertices, indices);
+	indices = cubeMesh->CreateIndices(6);
+	vertices = cubeMesh->RenderCube(10);
 
-	int vertexLength = 11, normalOffset = 5;
-	obj1->calculateNormals(vertexLength, normalOffset);
+	cubeMesh->CreateMesh(vertices, indices);
 
-	meshList.push_back(obj1);
+	meshList.push_back(cubeMesh);
+
+	Mesh* obj2 = new Mesh();
+
+	indices = obj2->CreateIndices(6);
+	vertices = obj2->RenderCube(10);
+
+	obj2->CreateMesh(vertices, indices);
+
+	meshList.push_back(obj2);
 }
 
 void CreateShaders()
@@ -86,9 +97,9 @@ int main()
 	dirtTexture = Texture("Textures/dirt.png");
 	dirtTexture.LoadTexture();
 
-	glm::vec3 colour = glm::vec3(1.0f, 1.0f, 1.0f);
-	glm::vec3 direction = glm::vec3(2.0f, -1.0f, -2.0f);
-	mainLight = Light(colour, 1.0f, direction, 1.0f);
+	glm::vec3 lightColour = glm::vec3(1.0f, 1.0f, 1.0f);     // Pure white sunlight
+	glm::vec3 lightDirection = glm::vec3(-1.0f, -1.0f, -1.0f); // Diagonal "sun" (like early morning or afternoon)
+	mainLight = Light(lightColour, 0.2f, lightDirection, 1.0f);
 
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), bufferWidth / bufferHeight, 0.1f, 100.0f);
 
@@ -97,6 +108,9 @@ int main()
 		GLfloat now = (GLfloat) glfwGetTime();
 		deltaTime = now - lastTime;
 		lastTime = now;
+
+		float fps = 1.0f / deltaTime;
+		std::cout << "FPS: " << fps << std::endl;
 
 		//clear window
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -124,24 +138,24 @@ int main()
 		uniformView = shaderList[0]->GetViewLocation();
 		uniformAmbientColour = shaderList[0]->GetAmbientColourLocation();
 		uniformAmbientIntensity = shaderList[0]->GetAmbientIntenityLocation();
-		uniformDirection = shaderList[0]->GetDirectionLocation();
-		uniformDiffuseIntensity = shaderList[0]->GetDiffuseIntensityLocation();
 
-		mainLight.UseLight(uniformAmbientIntensity, uniformAmbientColour, uniformDiffuseIntensity, uniformDirection);
+    uniformDiffuseDirection = shaderList[0]->GetDiffuseDirectionLocation();
+		uniformDiffuseIntensity = shaderList[0]->GetDiffuseIntensityLocation();
+		uniformColour = shaderList[0]->GetColourLocation();
+
+		mainLight.UseLight(uniformAmbientIntensity, uniformAmbientColour, uniformDiffuseDirection, uniformDiffuseIntensity);
 
 		//glUniform1f(uniformModel, triOffset);
 		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 
-		//texture
+		// Cubes  - left
 		meshList[0]->RenderMesh();
-
+	
 		//swap buffers
 		mainWindow.swapBuffers();
-
 	}
-
 
 	glfwTerminate();
 	return 0;

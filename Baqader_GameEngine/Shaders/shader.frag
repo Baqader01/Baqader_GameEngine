@@ -1,15 +1,16 @@
 #version 330
-out vec4 colour;
+out vec4 aColour;
 
-in vec3 vCol;
 in vec2 textureCoordinate;
-in vec3 Normal;
+in vec3 normal;
+in vec3 colour;
 
 struct DirectionalLight
 {
 	vec3 colour;
 	float ambientIntensity;
-	vec3 direction;
+
+  vec3 direction;
 	float diffuseIntensity;
 };
 
@@ -18,8 +19,14 @@ uniform DirectionalLight directionalLight;
 
 void main()
 {
-	vec4 ambientColour = vec4(directionalLight.colour, 1.0f) * directionalLight.ambientIntensity;
+	vec3 ambient = directionalLight.colour * directionalLight.ambientIntensity;
 
+	//normalize all the vectors;
+	float diff = max(dot( normalize(normal), normalize(-directionalLight.direction)), 0.0);
+	vec3 diffuse = directionalLight.colour * diff * directionalLight.diffuseIntensity;
+
+	aColour = vec4((ambient + diffuse) * colour, 1.0);
+	//colour = texture(mainTexture, textureCoordinate) * ambientColour;
 
 	//A.B =	|A| |B| cos(angle)
 	float diffuseFactor = max(dot(normalize(Normal), normalize(directionalLight.direction)), 0.0f);
