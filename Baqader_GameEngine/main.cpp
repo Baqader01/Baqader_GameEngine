@@ -108,6 +108,9 @@ int main()
 		deltaTime = now - lastTime;
 		lastTime = now;
 
+		float fps = 1.0f / deltaTime;
+		std::cout << "FPS: " << fps << std::endl;
+
 		//clear window
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

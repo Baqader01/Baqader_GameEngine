@@ -14,8 +14,8 @@ Mesh::Mesh()
 	instanceVBO = 0;
 	instanceColourVBO = 0;
 
-	int rows = 5;
-	int columns = 10;
+	int rows = 50;
+	int columns = 100;
 	float spacing = 20.0f; // distance between cubes
 
 	for (int row = 0; row < rows; ++row)
@@ -28,7 +28,7 @@ Mesh::Mesh()
 		}
 	}
 	
-	int colourCount = 50;
+	int colourCount = 5000;
 	for (int i = 0; i < colourCount; i++)
 	{
 		colours.push_back(glm::vec3(

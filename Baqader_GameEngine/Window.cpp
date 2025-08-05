@@ -82,7 +82,8 @@ int Window::init()
 	glfwMakeContextCurrent(window);
 
 	//get buffer size
-	glfwGetFramebufferSize(window, &bufferWidth, &bufferHeight);
+	//glfwGetFramebufferSize(window, &bufferWidth, &bufferHeight);
+	glfwSetFramebufferSizeCallback(window, frameBufferSize);
 
 	//handle key + mouse inputs
 	createCallbacks();
@@ -130,7 +131,7 @@ void Window::createCallbacks()
 
 void Window::handleKeys(GLFWwindow* window, int key, int code, int action, int mode)
 {
-	Window* theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+	Window* mainWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window, GL_TRUE);
@@ -140,12 +141,12 @@ void Window::handleKeys(GLFWwindow* window, int key, int code, int action, int m
 	{
 		if (action == GLFW_PRESS)
 		{
-			theWindow->keys[key] = true;
+			mainWindow->keys[key] = true;
 			//std::cout << "pressed: " << key << std::endl;
 		}
 		else if(action == GLFW_RELEASE)
 		{
-			theWindow->keys[key] = false;
+			mainWindow->keys[key] = false;
 			//std::cout << "released: " << key << std::endl;
 		}
 	}
@@ -153,21 +154,30 @@ void Window::handleKeys(GLFWwindow* window, int key, int code, int action, int m
 
 void Window::handleMouse(GLFWwindow* window, double xPos, double yPos)
 {
-	Window* theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+	Window* mainWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
 	
-	if (theWindow->mouseFirstMoved)
+	if (mainWindow->mouseFirstMoved)
 	{
-		theWindow->lastX = (GLfloat) xPos;
-		theWindow->lastY = (GLfloat) yPos;
+		mainWindow->lastX = (GLfloat) xPos;
+		mainWindow->lastY = (GLfloat) yPos;
 
-		theWindow->mouseFirstMoved = false;
+		mainWindow->mouseFirstMoved = false;
 	}
 
-	theWindow->changeX = (GLfloat) xPos - theWindow->lastX;
-	theWindow->changeY = theWindow->lastY - (GLfloat) yPos;
+	mainWindow->changeX = (GLfloat) xPos - mainWindow->lastX;
+	mainWindow->changeY = mainWindow->lastY - (GLfloat) yPos;
 
-	theWindow->lastX = (GLfloat) xPos;
-	theWindow->lastY = (GLfloat) yPos;
+	mainWindow->lastX = (GLfloat) xPos;
+	mainWindow->lastY = (GLfloat) yPos;
 
 	//std::cout << "x: " << theWindow->changeX << ", y:" << theWindow->changeY << std::endl;
+}
+
+void Window::frameBufferSize(GLFWwindow* window, int w, int h)
+{
+	Window* mainWindow = static_cast<Window*>(glfwGetWindowUserPointer(window));
+	mainWindow->bufferHeight = h;
+	mainWindow->bufferWidth = w;
+
+	glViewport(0, 0, mainWindow->bufferWidth, mainWindow->bufferHeight);
 }
