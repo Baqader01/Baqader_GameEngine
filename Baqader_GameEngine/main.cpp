@@ -13,6 +13,7 @@
 #include "Texture.h"
 #include "Light.h"
 
+
 //window dimensions
 const GLint WIDTH = 800, HEIGHT = 600;
 const float toRadians = 3.1459265f / 180.0f;
@@ -98,7 +99,7 @@ int main()
 
 	glm::vec3 lightColour = glm::vec3(1.0f, 1.0f, 1.0f);     // Pure white sunlight
 	glm::vec3 lightDirection = glm::vec3(-1.0f, -1.0f, -1.0f); // Diagonal "sun" (like early morning or afternoon)
-		mainLight = Light(lightColour, 0.2f, lightDirection, 1.0f);
+	mainLight = Light(lightColour, 0.2f, lightDirection, 1.0f);
 
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), bufferWidth / bufferHeight, 0.1f, 100.0f);
 

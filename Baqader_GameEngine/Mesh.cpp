@@ -14,21 +14,21 @@ Mesh::Mesh()
 	instanceVBO = 0;
 	instanceColourVBO = 0;
 
-	int rows = 50;
-	int columns = 100;
-	float spacing = 20.0f; // distance between cubes
+	//int rows = 50;
+	//int columns = 100;
+	//float spacing = 20.0f; // distance between cubes
 
-	for (int row = 0; row < rows; ++row)
-	{
-		for (int col = 0; col < columns; ++col)
-		{
-			float x = col * spacing;
-			float z = -row * spacing; // negative to go "behind"
-			translations.push_back(glm::vec3(x, 0.0f, z));
-		}
-	}
+	//for (int row = 0; row < rows; ++row)
+	//{
+	//	for (int col = 0; col < columns; ++col)
+	//	{
+	//		float x = col * spacing;
+	//		float z = -row * spacing; // negative to go "behind"
+	//		translations.push_back(glm::vec3(x, 0.0f, z));
+	//	}
+	//}
 	
-	int colourCount = 5000;
+	int colourCount = 100000;
 	for (int i = 0; i < colourCount; i++)
 	{
 		colours.push_back(glm::vec3(
@@ -36,6 +36,31 @@ Mesh::Mesh()
 			static_cast<float>(rand()) / RAND_MAX,
 			static_cast<float>(rand()) / RAND_MAX
 		));
+	}
+
+	int width = 100;
+	int depth = 100;
+	float frequency = 1.0f;
+	float amplitude = 150.0f;
+
+	float spacing = 20;
+
+	// Setup noise generator
+	FastNoiseLite noise;
+	noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+	noise.SetFractalType(FastNoiseLite::FractalType::FractalType_Ridged);
+
+	for (int z = 0; z < depth; ++z) {
+		for (int x = 0; x < width; ++x) {
+			float worldX = x * spacing;
+			float worldZ = z * spacing;
+
+			// Generate height using noise
+			float rawHeight = noise.GetNoise(x * frequency, z * frequency) * amplitude;
+			float height = static_cast<int>(round(rawHeight / 20) * 20);
+
+			translations.push_back(glm::vec3(worldX, height, worldZ));
+		}
 	}
 }
 
