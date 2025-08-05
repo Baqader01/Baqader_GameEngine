@@ -11,44 +11,90 @@ Mesh::Mesh()
 	VAO = 0;
 	VBO = 0;
 	IBO = 0;
+	instanceVBO = 0;
+	instanceColourVBO = 0;
+
+	int cubeCount = 10;
+	translations.resize(cubeCount);
+
+	float cubeSpacing = 20.0f; // cube is width=0.1, so full size is 0.2 (left to right)x
+	for (int i = 0; i < cubeCount; i++)
+	{
+		translations[i] = glm::vec3(i * cubeSpacing, 0.0, 0.0);
+	}
+	
+	int colourCount = 10;
+	colours.resize(colourCount);
+	for (int i = 0; i < colourCount; i++)
+	{
+		colours[i] = glm::vec3(
+			static_cast<float>(rand()) / RAND_MAX,
+			static_cast<float>(rand()) / RAND_MAX,
+			static_cast<float>(rand()) / RAND_MAX
+		);
+	}
 }
 
 void Mesh::CreateMesh(std::vector<GLfloat> vertices, std::vector<GLuint> indices)
 {
 
+	//vao vertex array
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
+	//ibo vertex array
 	glGenBuffers(1, &IBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), indices.data(), GL_STATIC_DRAW);
 
+	// vbo vertex array
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, 0);
 	glEnableVertexAttribArray(0);
-
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 3));
 	glEnableVertexAttribArray(1);
-
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 5));
 	glEnableVertexAttribArray(2);
 
+	//instance position vbo
+	glGenBuffers(1, &instanceVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * translations.size(), translations.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	// instance colour VBO
+	glGenBuffers(1, &instanceColourVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, instanceColourVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * colours.size(), colours.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	 // also set instance data
+	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribDivisor(3, 1);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, instanceColourVBO);
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribDivisor(4, 1);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
+
 void Mesh::RenderMesh() const
 {
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
-	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-	//glDrawArrays(GL_TRIANGLES, 0, 3);
-
+	glDrawElementsInstanced(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0, translations.size());
+		
 	glBindVertexArray(0);
 	glUseProgram(0);
 }
@@ -131,8 +177,6 @@ std::vector<GLfloat> Mesh::RenderCube(GLfloat width) //e.g. 5
 
 	//https://youtu.be/FKLbihqDLsg?si=SxWQxdszzjFUFJGP&t=206
 
-	std::cout << "Creating mesh with " << vertices.size() << " vertices.\n";
-
 	return vertices;
 }
 
@@ -151,6 +195,8 @@ void Mesh::ClearMesh()
 	if (IBO != 0) glDeleteBuffers(1, &IBO); IBO = 0;
 	if (VBO != 0) glDeleteBuffers(1, &VBO); VBO = 0;
 	if (VAO != 0) glDeleteVertexArrays(1, &VAO); VAO = 0;
+	if (instanceColourVBO != 0) glDeleteVertexArrays(1, &instanceColourVBO); instanceColourVBO = 0;
+	if (instanceVBO != 0) glDeleteVertexArrays(1, &instanceVBO); instanceVBO = 0;
 }
 
 Mesh::~Mesh()

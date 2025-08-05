@@ -145,33 +145,11 @@ int main()
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 
-		// Cube 1 - left
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -5.0f)); // left
-		model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
-
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		glUniform3f(uniformColour, 0.0f, 1.0f, 1.0f);
-
+		// Cubes  - left
 		meshList[0]->RenderMesh();
 	
-		glUseProgram(0);
-
-		shaderList[0]->UseShader();
-
-		// Cube 2 - right
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(2.0f, 0.0f, -5.0f)); // right
-		model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
-
-		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-		glUniform3f(uniformColour, 1.0f, 0.0f, 1.0f);
-
-		meshList[1]->RenderMesh();
-
 		//swap buffers
 		mainWindow.swapBuffers();
-
 	}
 
 	glfwTerminate();
