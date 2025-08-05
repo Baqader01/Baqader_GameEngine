@@ -14,24 +14,28 @@ Mesh::Mesh()
 	instanceVBO = 0;
 	instanceColourVBO = 0;
 
-	int cubeCount = 10;
-	translations.resize(cubeCount);
+	int rows = 5;
+	int columns = 10;
+	float spacing = 20.0f; // distance between cubes
 
-	float cubeSpacing = 20.0f; // cube is width=0.1, so full size is 0.2 (left to right)x
-	for (int i = 0; i < cubeCount; i++)
+	for (int row = 0; row < rows; ++row)
 	{
-		translations[i] = glm::vec3(i * cubeSpacing, 0.0, 0.0);
+		for (int col = 0; col < columns; ++col)
+		{
+			float x = col * spacing;
+			float z = -row * spacing; // negative to go "behind"
+			translations.push_back(glm::vec3(x, 0.0f, z));
+		}
 	}
 	
-	int colourCount = 10;
-	colours.resize(colourCount);
+	int colourCount = 50;
 	for (int i = 0; i < colourCount; i++)
 	{
-		colours[i] = glm::vec3(
+		colours.push_back(glm::vec3(
 			static_cast<float>(rand()) / RAND_MAX,
 			static_cast<float>(rand()) / RAND_MAX,
 			static_cast<float>(rand()) / RAND_MAX
-		);
+		));
 	}
 }
 
