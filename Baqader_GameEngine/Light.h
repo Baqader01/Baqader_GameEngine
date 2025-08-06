@@ -18,6 +18,5 @@ private:
 
 	glm::vec3 m_direction;
 	GLfloat m_diffuseIntensity;
-	GLfloat m_DiffuseIntensity;
 };
 

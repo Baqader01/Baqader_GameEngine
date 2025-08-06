@@ -26,14 +26,6 @@ void main()
 	vec3 diffuse = directionalLight.colour * diff * directionalLight.diffuseIntensity;
 
 	aColour = vec4((ambient + diffuse) * colour, 1.0);
-	//colour = texture(mainTexture, textureCoordinate) * ambientColour;
-
-	//A.B =	|A| |B| cos(angle)
-	float diffuseFactor = max(dot(normalize(Normal), normalize(directionalLight.direction)), 0.0f);
-	vec4 diffuseColour = vec4(directionalLight.colour, 1.0f) * directionalLight.diffuseIntensity * diffuseFactor;
-	
-	colour = vec4(vCol, 1) * (ambientColour + diffuseColour);
-
 	//colour = texture(mainTexture, textureCoordinate) * (ambientColour + diffuseColour);
 	
 }

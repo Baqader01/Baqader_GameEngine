@@ -56,15 +56,6 @@ void CreateObjects()
 	cubeMesh->CreateMesh(vertices, indices);
 
 	meshList.push_back(cubeMesh);
-
-	Mesh* obj2 = new Mesh();
-
-	indices = obj2->CreateIndices(6);
-	vertices = obj2->RenderCube(10);
-
-	obj2->CreateMesh(vertices, indices);
-
-	meshList.push_back(obj2);
 }
 
 void CreateShaders()
@@ -131,7 +122,7 @@ int main()
 		glm::mat4 model(1.0f);
 		//model = glm::translate(model, glm::vec3(0, 0.0f, -2.5f));
 		//model = glm::rotate(model, 120 * toRadians, glm::vec3(0.0f, 1.0f, 0));
-		//model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1));
+		model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1));
 
 		uniformModel = shaderList[0]->GetModelLocation();
 		uniformProjection = shaderList[0]->GetProjectionLocation();
@@ -139,7 +130,7 @@ int main()
 		uniformAmbientColour = shaderList[0]->GetAmbientColourLocation();
 		uniformAmbientIntensity = shaderList[0]->GetAmbientIntenityLocation();
 
-    uniformDiffuseDirection = shaderList[0]->GetDiffuseDirectionLocation();
+		uniformDiffuseDirection = shaderList[0]->GetDiffuseDirectionLocation();
 		uniformDiffuseIntensity = shaderList[0]->GetDiffuseIntensityLocation();
 		uniformColour = shaderList[0]->GetColourLocation();
 
