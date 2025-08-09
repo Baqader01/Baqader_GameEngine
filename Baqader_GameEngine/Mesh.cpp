@@ -13,59 +13,6 @@ Mesh::Mesh()
 	IBO = 0;
 	instanceVBO = 0;
 	instanceColourVBO = 0;
-
-	//int rows = 50;
-	//int columns = 100;
-	//float spacing = 20.0f; // distance between cubes
-
-	//for (int row = 0; row < rows; ++row)
-	//{
-	//	for (int col = 0; col < columns; ++col)
-	//	{
-	//		float x = col * spacing;
-	//		float z = -row * spacing; // negative to go "behind"
-	//		translations.push_back(glm::vec3(x, 0.0f, z));
-	//	}
-	//}
-	
-	int colourCount = 100000;
-	for (int i = 0; i < colourCount; i++)
-	{
-		colours.push_back(glm::vec3(
-			static_cast<float>(rand()) / RAND_MAX,
-			static_cast<float>(rand()) / RAND_MAX,
-			static_cast<float>(rand()) / RAND_MAX
-		));
-	}
-
-	int width = 100;
-	int depth = 100;
-	float frequency = 1.0f;
-	float amplitude = 150.0f;
-
-	float spacing = 20;
-
-	// Setup noise generator
-	FastNoiseLite noise;
-	noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-	noise.SetFractalType(FastNoiseLite::FractalType::FractalType_Ridged);
-
-	for (int z = 0; z < depth; ++z) {
-		for (int x = 0; x < width; ++x) {
-			float worldX = x * spacing;
-			float worldZ = z * spacing;
-
-			// Generate height using noise
-			float rawHeight = noise.GetNoise(x * frequency, z * frequency) * amplitude;
-			float height = static_cast<int>(round(rawHeight / 20) * 20);
-
-			//translations.push_back(glm::vec3(worldX, height, worldZ));
-			for (float y = 0; y <= height; y += spacing)
-			{
-				translations.push_back(glm::vec3(worldX, y, worldZ));
-			}
-		}
-	}
 }
 
 void Mesh::CreateMesh(std::vector<GLfloat> vertices, std::vector<GLuint> indices)
@@ -92,44 +39,22 @@ void Mesh::CreateMesh(std::vector<GLfloat> vertices, std::vector<GLuint> indices
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 5));
 	glEnableVertexAttribArray(2);
 
-	//instance position vbo
-	glGenBuffers(1, &instanceVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * translations.size(), translations.data(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	// instance colour VBO
-	glGenBuffers(1, &instanceColourVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, instanceColourVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * colours.size(), colours.data(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	 // also set instance data
-	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glVertexAttribDivisor(3, 1);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, instanceColourVBO);
-	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glVertexAttribDivisor(4, 1);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
+	//chunk rendering
 	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	//glUseProgram(0);
 }
 
-void Mesh::RenderMesh() const
+void Mesh::BindVAO()
 {
 	glBindVertexArray(VAO);
+}
+
+void Mesh::BindIBO()
+{
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
-	glDrawElementsInstanced(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0, translations.size());
-		
-	glBindVertexArray(0);
-	glUseProgram(0);
 }
 
 std::vector<GLuint> Mesh::CreateIndices(int squares)

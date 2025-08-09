@@ -6,12 +6,12 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Mesh.h"
 #include "Shader.h"
 #include "Window.h"
 #include "Camera.h"
 #include "Texture.h"
 #include "Light.h"
+#include "Chunk.h"
 
 
 //window dimensions
@@ -25,6 +25,8 @@ GLuint uniformColour;
 GLuint uniformModel = 0, uniformProjection = 0, uniformView = 0,
 	uniformAmbientColour = 0, uniformAmbientIntensity = 0,
 	uniformDiffuseDirection = 0, uniformDiffuseIntensity = 0;
+
+FastNoiseLite noise;
 
 Window mainWindow;
 
@@ -94,6 +96,15 @@ int main()
 
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), bufferWidth / bufferHeight, 0.1f, 100.0f);
 
+	// Cubes  - left
+	Chunk* chunk1 = new Chunk(glm::vec3(0, 0, 0), meshList[0]);
+	chunk1->Generate(noise);
+
+	// Cubes  - left
+	Chunk* chunk2 = new Chunk(glm::vec3(320, 0, 0), meshList[0]);
+	chunk2->Generate(noise);
+
+
 	while (!mainWindow.getShouldClose())
 	{
 		GLfloat now = (GLfloat) glfwGetTime();
@@ -141,9 +152,8 @@ int main()
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 
-		// Cubes  - left
-		meshList[0]->RenderMesh();
-	
+		chunk1->Render();
+
 		//swap buffers
 		mainWindow.swapBuffers();
 	}

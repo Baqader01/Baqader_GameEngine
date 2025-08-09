@@ -11,7 +11,12 @@ public:
 
 	void CreateMesh(std::vector<GLfloat> vertices, std::vector<GLuint> indices);
 	void ClearMesh();
-	void RenderMesh() const;
+
+	std::vector<GLfloat> GetVertices() { return vertices; }
+	std::vector<GLuint> GetIndices() { return indices; }
+
+	void BindVAO();
+	void BindIBO();
 
 	std::vector<GLuint> CreateIndices(int div);
 	std::vector<GLfloat> RenderCube(GLfloat width);
@@ -24,9 +29,5 @@ private:
 	GLuint VAO, VBO, IBO, instanceVBO, instanceColourVBO;
 	std::vector<GLfloat> vertices;
 	std::vector<GLuint> indices;
-
-	//100 positions
-	std::vector<glm::vec3> translations;
-	std::vector<glm::vec3> colours;
 };
 
