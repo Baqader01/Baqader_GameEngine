@@ -11,8 +11,7 @@
 #include "Camera.h"
 #include "Texture.h"
 #include "Light.h"
-#include "Chunk.h"
-
+#include "World.h"
 
 //window dimensions
 const GLint WIDTH = 800, HEIGHT = 600;
@@ -78,8 +77,14 @@ int main()
 	CreateObjects();
 	CreateShaders();
 
+	srand(time(0));
+	noise.SetSeed(rand());
+
+	World* world = new World(meshList[0], noise);
+	world->Update();
+
 	camera = Camera(
-		glm::vec3(0.0f, 0.0f, 0.0f),    // position
+		glm::vec3(0, 20, 0),    // position
 		glm::vec3(0.0f, 1.0f, 0.0f),   // up
 		90.0f, 0.0f,                     // yaw, pitch
 		5.0f, 0.5f                      // movementSpeed, turnSpeed
@@ -95,15 +100,6 @@ int main()
 	mainLight = Light(lightColour, 0.2f, lightDirection, 1.0f);
 
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), bufferWidth / bufferHeight, 0.1f, 100.0f);
-
-	// Cubes  - left
-	Chunk* chunk1 = new Chunk(glm::vec3(0, 0, 0), meshList[0]);
-	chunk1->Generate(noise);
-
-	// Cubes  - left
-	Chunk* chunk2 = new Chunk(glm::vec3(320, 0, 0), meshList[0]);
-	chunk2->Generate(noise);
-
 
 	while (!mainWindow.getShouldClose())
 	{
@@ -152,7 +148,7 @@ int main()
 		glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 
-		chunk1->Render();
+		world->Render();
 
 		//swap buffers
 		mainWindow.swapBuffers();

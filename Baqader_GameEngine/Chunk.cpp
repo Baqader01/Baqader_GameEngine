@@ -1,24 +1,19 @@
 #include "Chunk.h"
 #include <iostream>
+#include "World.h"
 
-Chunk::Chunk(glm::vec3 position, Mesh* object)
+Chunk::Chunk(glm::vec2 position, Mesh* object, FastNoiseLite& noise) : m_noise(noise)
 {
-	m_position = position;
+	//x and z positions
+	m_position.x = position.x; m_position.y = 0; m_position.z = position.y;
 	m_object = object;
 }
 
-void Chunk::Generate(FastNoiseLite &noise)
+void Chunk::Generate()
 {
-	int width = 16;
-	int depth = 16;
-	float frequency = 1.0f;
-	float amplitude = 150.0f;
-
-	float cubeSize = 20;
-
 	// Setup noise generator
-	noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-	noise.SetFractalType(FastNoiseLite::FractalType::FractalType_Ridged);
+	m_noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+	m_noise.SetFractalType(FastNoiseLite::FractalType::FractalType_Ridged);
 
 	for (int z = 0; z < depth; ++z) {
 		for (int x = 0; x < width; ++x) {
@@ -26,19 +21,16 @@ void Chunk::Generate(FastNoiseLite &noise)
 			float worldZ = m_position.z + (z * cubeSize);
 
 			// Generate height using noise
-			float rawHeight = noise.GetNoise(
+			float rawHeight = m_noise.GetNoise(
 				(worldX / cubeSize) * frequency,
 				(worldZ / cubeSize) * frequency
 			) * amplitude;
 
 			float height = static_cast<int>(round(rawHeight / cubeSize) * cubeSize);
-
-			//translations.push_back(glm::vec3(worldX, height, worldZ));
 			for (float y = 0; y <= height; y += cubeSize)
 			{
 				translations.push_back(glm::vec3(worldX, y, worldZ));
 			}
-
 		}
 	}
 
@@ -64,6 +56,19 @@ void Chunk::Generate(FastNoiseLite &noise)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+glm::vec3 Chunk::CubeHight(float worldX, float worldZ)
+{
+	// Generate height using noise
+	float rawHeight = m_noise.GetNoise(
+		(worldX / cubeSize) * frequency,
+		(worldZ / cubeSize) * frequency
+	) * amplitude;
+
+	float height = static_cast<int>(round(rawHeight / cubeSize));
+	return glm::vec3(worldX, height, worldZ);
+	
+}
+
 void Chunk::Render()
 {
 
@@ -87,7 +92,5 @@ void Chunk::Render()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glBindVertexArray(0);
-
 }
-
 
